@@ -40,13 +40,13 @@ public class JwtUtils {
     }
 
     private static String SECRET_KEY;
-    private static Long EXPIRATION_TIME; // 10 days
+    private static int EXPIRATION_TIME = 864_000_000; // 10 days
 
     public String generateToken(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtProperty.getTokenExpirationInMinutes() * 1000);
+        Date expiryDate = new Date(now.getTime() + EXPIRATION_TIME);
 
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
