@@ -1,5 +1,6 @@
 package com.tms.easyrento.controller;
 
+import com.tms.easyrento.dto.request.LoginRequest;
 import com.tms.easyrento.dto.request.UserRequest;
 import com.tms.easyrento.globals.BaseController;
 import com.tms.easyrento.globals.GlobalApiResponse;
@@ -8,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -24,7 +26,7 @@ public class AuthController extends BaseController {
 
     public final UserAccountService userAccountService;
 
-    @PostMapping()
+    @PostMapping("/auth/register")
     public ResponseEntity<GlobalApiResponse> registerNewAccount(@Valid @RequestBody UserRequest request) {
         return new ResponseEntity<>(successResponse("created",
                 userAccountService.create(request)),
@@ -52,6 +54,14 @@ public class AuthController extends BaseController {
         return new ResponseEntity<>(successResponse("success",
                 userAccountService.getById(userId)),
                 HttpStatus.OK);
+    }
+
+    @PostMapping("/auth/login")
+    public ResponseEntity<GlobalApiResponse> handleAuthentication(@RequestBody LoginRequest loginRequest, Authentication authentication) {
+        // Your authentication logic here
+        return new ResponseEntity<>(successResponse("success",
+                userAccountService.generateToken(loginRequest)),
+        HttpStatus.OK);
     }
 
 
