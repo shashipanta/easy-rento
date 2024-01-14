@@ -1,6 +1,7 @@
 package com.tms.easyrento.exception;
 
 import com.tms.easyrento.config.CustomMessageSource;
+import com.tms.easyrento.globals.GlobalApiResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -162,6 +164,16 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
             // in case message source does not have required code
             errors.add(defaultMessage);
         }
+    }
+
+    /**
+     * Authentication exception
+     */
+    @ExceptionHandler(BadCredentialsException.class)
+    private ResponseEntity<GlobalApiResponse> handleBadCredentialsException(BadCredentialsException bce) {
+
+        return new ResponseEntity<>(GlobalApiResponse.builder().message(bce.getMessage()).build(), HttpStatus.BAD_REQUEST);
+
     }
 
     @Getter

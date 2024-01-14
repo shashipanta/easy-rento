@@ -1,9 +1,13 @@
 package com.tms.easyrento.service;
 
+import com.tms.easyrento.dto.request.LoginRequest;
 import com.tms.easyrento.dto.request.UserRequest;
+import com.tms.easyrento.dto.response.LoginResponse;
 import com.tms.easyrento.dto.response.UserResponse;
+import com.tms.easyrento.model.UserAccount;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author shashi
@@ -21,4 +25,8 @@ public interface UserAccountService {
     UserResponse getById(Long id);
 
     void softDelete(Long id, Long isActive);
+
+    Optional<UserAccount> fetchUserAccountByUsername(String username);
+
+    LoginResponse generateToken(LoginRequest loginRequest);
 }

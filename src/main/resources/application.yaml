@@ -24,3 +24,9 @@ spring:
 logging:
   level:
     org.springframework.web: debug
+    org.springframework.security: debug
+
+# jwt property
+jwt:
+  secret-key: X7BSnMS4e12M0Sz/4IWr+VPNK6vpAee5LfhaM3scjiU=
+  token-expiration-in-minutes: 1
