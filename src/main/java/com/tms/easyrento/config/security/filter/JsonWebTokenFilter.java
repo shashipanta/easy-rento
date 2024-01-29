@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -43,7 +44,8 @@ public class JsonWebTokenFilter extends OncePerRequestFilter {
             if (token != null && jwtUtils.validateToken(token)) {
                 Authentication authentication = jwtUtils.getAuthentication(token);
                 if (authentication != null) {
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    SecurityContext securityContext = SecurityContextHolder.getContext();
+                    securityContext.setAuthentication(authentication);
                 }
             }
         } catch (Exception ex) {

@@ -1,5 +1,7 @@
 package com.tms.easyrento.enums;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.List;
  * @version 1.0.0
  * @since 12/6/23 3:39 AM
  */
+@Getter
 public enum PropertyType {
 
     HOUSE("HOUSE", "NEPALI-HOUSE"),

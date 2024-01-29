@@ -27,4 +27,14 @@ public interface PropertyRepo extends JpaRepository<Property, Long> {
 
     @Query(value = "UPDATE properties p SET p.active = not p.active WHERE p.id = ?1", nativeQuery = true)
     void toggleActiveStatus(Long id);
+
+
+    @Query(nativeQuery = true,
+    value = """
+                select *
+                from properties p
+                where p.owner_id = ?
+                  and p.active = true
+            """)
+    List<Property> getPropertyByOwnerId(Long ownerId);
 }

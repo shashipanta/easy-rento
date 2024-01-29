@@ -48,6 +48,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authz -> authz
                                 .requestMatchers("api/v1/user-accounts/auth/**").permitAll()
+                                .requestMatchers("api/v1/properties/get-info/**").permitAll()
+                                .requestMatchers("api/v1/properties/get-image/**").permitAll()
+                                .requestMatchers("/error").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -1,5 +1,6 @@
 package com.tms.easyrento.model;
 
+import com.tms.easyrento.enums.UserType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,4 +39,8 @@ public class UserAccount extends AbstractAuditor {
 
     @Column(name = "password", nullable = false)
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_type")
+    private UserType userType = UserType.TENANT;
 }

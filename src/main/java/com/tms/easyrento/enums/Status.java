@@ -8,7 +8,9 @@ package com.tms.easyrento.enums;
 public enum Status {
 
     APPROVED("APPROVED", "APPROVED_NP"),
-    UNDER_APPROVAL("UDER_APPROVAL", "UNDER_APPROVAL_NP");
+    UNDER_APPROVAL("UDER_APPROVAL", "UNDER_APPROVAL_NP"),
+    TERMINATED("TERMINATED", "TERMINATED_NP"),
+    REJECTED("REJECTED", "REJECTED_NP");
 
     Status(String name, String nameNp) {
         this.name = name;

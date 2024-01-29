@@ -1,13 +1,16 @@
 package com.tms.easyrento.service.impl;
 
 import com.tms.easyrento.dto.request.PropertyRequest;
+import com.tms.easyrento.dto.request.RentalOfferRequest;
 import com.tms.easyrento.dto.response.PropertyMetaDataResponse;
 import com.tms.easyrento.dto.response.PropertyResponse;
 import com.tms.easyrento.enums.PropertyType;
 import com.tms.easyrento.mappers.PropertyMapper;
+import com.tms.easyrento.mappers.RentalOfferMapper;
 import com.tms.easyrento.model.file.PropertyImage;
 import com.tms.easyrento.model.property.Property;
 import com.tms.easyrento.repository.PropertyRepo;
+import com.tms.easyrento.repository.RentalOfferRepo;
 import com.tms.easyrento.service.OwnerService;
 import com.tms.easyrento.service.PropertyService;
 import com.tms.easyrento.util.file.FileUtils;
@@ -18,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author shashi
@@ -32,6 +36,8 @@ public class PropertyServiceImpl implements PropertyService {
     private final OwnerService ownerService;
 
     private final PropertyMapper propertyMapper;
+    private final RentalOfferMapper rentalOfferMapper;
+    private final RentalOfferRepo rentalOfferRepo;
 
 
     @Override
@@ -54,8 +60,21 @@ public class PropertyServiceImpl implements PropertyService {
                 e.printStackTrace();
             }
         }
+        // for Land
+        setLandPropertyInfo(property);
         property.setPropertyImage(propertyImages);
+
         return propertyRepo.save(property).getId();
+    }
+
+    private void setLandPropertyInfo(Property property) {
+        String land = PropertyType.LAND.getTypeName();
+        if(land.equalsIgnoreCase(property.getPropertyType().getTypeName())) {
+            property.setTotalRooms(null);
+            property.setTotalBedRooms(null);
+            property.setTotalBathRooms(null);
+            property.setTotalLivingRooms(null);
+        }
     }
 
     private String generateRandomPropertyCode(String propertyType) {
@@ -104,5 +123,19 @@ public class PropertyServiceImpl implements PropertyService {
                 .propertyType(PropertyType.getAvailablePropertyTypes())
                 .ownerResponses(ownerService.read("1"))
                 .build();
+    }
+    @Override
+    public Boolean rentalRequest(RentalOfferRequest rentRequest) {
+        //
+        rentalOfferRepo.save(rentalOfferMapper.requestToEntity(rentRequest));
+        return Boolean.TRUE;
+    }
+
+    @Override
+    public List<PropertyResponse> getBy(Long ownerId) {
+        return propertyRepo.getPropertyByOwnerId(ownerId)
+                .stream()
+                .map(propertyMapper::entityToResponse)
+                .collect(Collectors.toList());
     }
 }

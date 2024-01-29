@@ -2,11 +2,15 @@ package com.tms.easyrento.service.impl;
 
 import com.tms.easyrento.dto.request.OwnerRequest;
 import com.tms.easyrento.dto.response.OwnerResponse;
+import com.tms.easyrento.dto.response.RentalOfferResponse;
+import com.tms.easyrento.dto.response.TenantResponse;
 import com.tms.easyrento.mappers.OwnerMapper;
 import com.tms.easyrento.model.owner.Owner;
 import com.tms.easyrento.repository.ContractRepo;
 import com.tms.easyrento.repository.OwnerRepo;
+import com.tms.easyrento.service.ContractService;
 import com.tms.easyrento.service.OwnerService;
+import com.tms.easyrento.service.RentalOfferService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +25,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OwnerServiceImpl implements OwnerService {
 
+    private final ContractService contractService;
+    private final RentalOfferService rentalOfferService;
     private final OwnerRepo ownerRepo;
 
     private final OwnerMapper ownerMapper;
@@ -70,5 +76,20 @@ public class OwnerServiceImpl implements OwnerService {
     public Boolean terminateContract(Long contractId) {
         contractRepo.terminateContractById(contractId);
         return Boolean.TRUE;
+    }
+    @Override
+    public List<TenantResponse> associatedTenants() {
+        // get ownerId from jwt token
+        return contractService.getAssociatedTenants(1l);
+    }
+
+    @Override
+    public List<RentalOfferResponse> rentalOffers(Long ownerId) {
+        return rentalOfferService.getOffers(ownerId);
+    }
+
+    @Override
+    public Integer rentOfferCounts(Long ownerId) {
+        return Math.toIntExact(rentalOfferService.totalOffersBy(ownerId));
     }
 }

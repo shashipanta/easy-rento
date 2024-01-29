@@ -23,6 +23,9 @@ public class PropertyRequest {
     private String propertyCode;
 
     @NotBlank(message = FieldErrorConstants.NOT_BLANK)
+    private String propertyTitle;
+
+    @NotBlank(message = FieldErrorConstants.NOT_BLANK)
     private String propertyType;
 
     @NotNull(message = FieldErrorConstants.NOT_NULL)
@@ -51,6 +54,9 @@ public class PropertyRequest {
     private String googleLocation;
 
     private String description;
+
+    private boolean occupied = false;
+
 
 //    private List<PropertyImageRequest> imageFiles;
 

@@ -1,6 +1,7 @@
 package com.tms.easyrento.repository;
 
 import com.tms.easyrento.model.contract.Contract;
+import com.tms.easyrento.model.tenant.Tenant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -30,8 +31,19 @@ public interface ContractRepo extends JpaRepository<Contract, Long> {
     boolean contractFinalTermination(Long contractId, String terminationRemarks);
 
 
+    @Modifying
     @Query(nativeQuery = true,
     value = "UPDATE contracts c SET c.status = 'APPROVED' WHERE c.id = ?1")
     void approveContract(Long contractId);
+
+    @Query(nativeQuery = true,
+    value = """
+                select t.*
+                from tenants t
+                         inner join contracts c on t.id = c.tenant_id
+                         inner join owners o on c.owner_id = o.id
+                where o.id = ?1
+            """)
+    List<Long> getAssociatedTenantId(Long ownerId);
 
 }

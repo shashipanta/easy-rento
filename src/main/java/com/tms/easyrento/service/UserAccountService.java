@@ -3,6 +3,7 @@ package com.tms.easyrento.service;
 import com.tms.easyrento.dto.request.LoginRequest;
 import com.tms.easyrento.dto.request.UserRequest;
 import com.tms.easyrento.dto.response.LoginResponse;
+import com.tms.easyrento.dto.response.UserDetailsResponse;
 import com.tms.easyrento.dto.response.UserResponse;
 import com.tms.easyrento.model.UserAccount;
 
@@ -29,4 +30,8 @@ public interface UserAccountService {
     Optional<UserAccount> fetchUserAccountByUsername(String username);
 
     LoginResponse generateToken(LoginRequest loginRequest);
+
+    Long getId(String username);
+
+    UserDetailsResponse details(String token);
 }

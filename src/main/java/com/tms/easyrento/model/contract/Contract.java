@@ -9,6 +9,8 @@ import lombok.Setter;
 
 import java.util.List;
 
+import static jakarta.persistence.CascadeType.ALL;
+
 /**
  * @author shashi
  * @version 1.0.0
@@ -26,17 +28,21 @@ public class Contract extends AbstractAuditor {
     @GeneratedValue(generator = "contracts_seq_gen", strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "contract")
-    private List<Tenant> tenant;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = ALL)
+    @JoinColumn(name = "tenant_id", foreignKey = @ForeignKey(name = "fk_contracts_tenants_id"))
+    private Tenant tenant;
 
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, mappedBy = "contract")
-    private List<Owner> owner;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {ALL})
+    @JoinColumn(name = "owner_id", foreignKey = @ForeignKey(name = "fk_contracts_owners_id"))
+    private Owner owner;
 
-    @Column(name = "tenant_full_name", nullable = false, length = 200)
-    private String tenantFullName;
+    // this might cause sync issue as table migit change names
 
-    @Column(name = "owner_full_name", nullable = false, length = 200)
-    private String ownerFullName;
+//    @Column(name = "tenant_full_name", nullable = false, length = 200)
+//    private String tenantFullName;
+//
+//    @Column(name = "owner_full_name", nullable = false, length = 200)
+//    private String ownerFullName;
 
     @Column(name = "contract_start_date", nullable = false)
     private String contractStartDate;

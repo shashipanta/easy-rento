@@ -1,12 +1,10 @@
 package com.tms.easyrento.repository;
 
-import com.tms.easyrento.dto.request.LoginRequest;
 import com.tms.easyrento.model.UserAccount;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -36,5 +34,7 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Long> 
             "          END", nativeQuery = true)
     List<UserAccount> getAll(Long isActive);
 
-    Optional<UserAccount> findUserAccountByUsername(String username);
+    @Query(nativeQuery = true,
+    value = "SELECT * FROM user_accounts u_a where u_a.user_name = ?1 or u_a.email = ?1")
+    Optional<UserAccount> findBy(String username);
 }

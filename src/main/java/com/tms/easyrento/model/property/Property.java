@@ -41,6 +41,10 @@ public class Property extends AbstractAuditor {
     @Column(name = "property_code", nullable = false)
     private String propertyCode;
 
+    // todo: add nullable false
+    @Column(name = "title")
+    private String title;
+
 //    @Column(name = "image_url", columnDefinition = "text")
 //    private String imageUrl;
 

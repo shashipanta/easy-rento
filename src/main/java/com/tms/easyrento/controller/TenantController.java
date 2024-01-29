@@ -1,8 +1,10 @@
 package com.tms.easyrento.controller;
 
+import com.tms.easyrento.dto.request.RentalOfferRequest;
 import com.tms.easyrento.dto.request.TenantRequest;
 import com.tms.easyrento.globals.BaseController;
 import com.tms.easyrento.globals.GlobalApiResponse;
+import com.tms.easyrento.service.PropertyService;
 import com.tms.easyrento.service.TenantService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class TenantController extends BaseController {
 
     private final TenantService tenantService;
+    private final PropertyService propertyService;
 
     @PostMapping
     public ResponseEntity<GlobalApiResponse> createTenant(@Valid @RequestBody TenantRequest request) {
@@ -29,7 +32,6 @@ public class TenantController extends BaseController {
         return new ResponseEntity<>(successResponse("created",
                 tenantService.create(request)),
                 HttpStatus.CREATED);
-
     }
 
 
@@ -41,12 +43,9 @@ public class TenantController extends BaseController {
                 HttpStatus.OK);
     }
 
-
-
     @GetMapping()
     public ResponseEntity<GlobalApiResponse> getActiveTenants(
             @RequestParam(required = false, defaultValue = "1") String isActive) {
-
 
         return new ResponseEntity<>(successResponse("success",
                 tenantService.read(isActive)),
@@ -59,6 +58,13 @@ public class TenantController extends BaseController {
 
         return new ResponseEntity<>(successResponse("success",
                 tenantService.read(isActive)),
+                HttpStatus.OK);
+    }
+
+    @PostMapping("/apply-for-rent")
+    public ResponseEntity<GlobalApiResponse> rentRequest(@RequestBody @Valid RentalOfferRequest rentalOfferRequest) {
+        return new ResponseEntity<>(successResponse("success",
+                propertyService.rentalRequest(rentalOfferRequest)),
                 HttpStatus.OK);
     }
 }

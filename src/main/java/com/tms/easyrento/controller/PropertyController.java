@@ -1,18 +1,20 @@
 package com.tms.easyrento.controller;
 
 import com.tms.easyrento.dto.request.PropertyRequest;
-import com.tms.easyrento.dto.response.PropertyResponse;
 import com.tms.easyrento.globals.BaseController;
 import com.tms.easyrento.globals.GlobalApiResponse;
 import com.tms.easyrento.service.PropertyService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 
 /**
  * @author shashi
@@ -26,6 +28,8 @@ import java.util.List;
 public class PropertyController extends BaseController {
 
     private final PropertyService propertyService;
+
+    private static final String PROPERTY_IMAGE_LOCATION = System.getProperty("user.home") + File.separator + "PROPERTY_IMAGE";
 
     @PostMapping
     ResponseEntity<GlobalApiResponse> createProduct( @ModelAttribute @Valid PropertyRequest propertyRequest) {
@@ -43,11 +47,19 @@ public class PropertyController extends BaseController {
                 HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/get-info/{id}")
     ResponseEntity<GlobalApiResponse> getProductById(@Valid @PathVariable("id") Long productId) {
 
         return new ResponseEntity<>(successResponse("success",
                 propertyService.read(productId)),
+                HttpStatus.OK);
+    }
+
+    @GetMapping("/get/{ownerId}")
+    ResponseEntity<GlobalApiResponse> getPropertyByOwnerId(@Valid @PathVariable("ownerId") Long ownerId) {
+
+        return new ResponseEntity<>(successResponse("success",
+                propertyService.getBy(ownerId)),
                 HttpStatus.OK);
     }
 
@@ -60,7 +72,7 @@ public class PropertyController extends BaseController {
                 HttpStatus.OK);
     }
 
-    @GetMapping
+    @GetMapping("/get-info/all")
     ResponseEntity<GlobalApiResponse> getProducts(@RequestParam(value = "isActive", defaultValue = "1") String isActive) {
 
         return new ResponseEntity<>(successResponse("success",
@@ -82,6 +94,17 @@ public class PropertyController extends BaseController {
         return new ResponseEntity<>(successResponse("success",
                 propertyService.getPropertyMetaInfo()),
                 HttpStatus.OK);
+    }
+
+    @GetMapping("/get-image/{filename}")
+    public ResponseEntity<byte[]> getImage(@PathVariable("filename") String filename) {
+        byte[] image = new byte[0];
+        try {
+            image = Files.readAllBytes(new File(PROPERTY_IMAGE_LOCATION + File.separator + filename).toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image);
     }
 
 }

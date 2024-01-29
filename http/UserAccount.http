@@ -11,6 +11,27 @@ Content-Type: application/json
 ### GET ALL REGISTERED USERS
 GET http://localhost:8090/api/v1/user-accounts?isActive=-2
 
+### GET LOGGED IN USER DETAILS
+GET http://localhost:8090/api/v1/user-accounts
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcnVuQHlvcG1haWwuY29tIiwidXNlcklkIjoxLCJpYXQiOjE3MDY1MjgwNjUsImV4cCI6MTcwNzM5MjA2NX0.-tScDoAzFlwpaYv8INBDjLHEAONeQHeUmHqCcAzVv4o
+
+{
+  "userId": 1,
+  "authToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcnVuQHlvcG1haWwuY29tIiwidXNlcklkIjoxLCJpYXQiOjE3MDY1MjgwNjUsImV4cCI6MTcwNzM5MjA2NX0.-tScDoAzFlwpaYv8INBDjLHEAONeQHeUmHqCcAzVv4o"
+}
+
+### GET OFFERS FOR TENANTS
+GET http://localhost:8090/api/v1/owners/get-offers/2
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcnVuQHlvcG1haWwuY29tIiwidXNlcklkIjoxLCJpYXQiOjE3MDY1MjgwNjUsImV4cCI6MTcwNzM5MjA2NX0.-tScDoAzFlwpaYv8INBDjLHEAONeQHeUmHqCcAzVv4o
+
+### GET PROPERTY IMAGE
+GET http://localhost:8090/api/v1/properties/get/7b2763f0-3187-455e-96cb-05baed705f70
+
+### GET OFFERS COUNT FOR OWNER
+GET http://localhost:8090/api/v1/owners/get-offers-count/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInN1YiI6ImFydW5AeW9wbWFpbC5jb20iLCJpYXQiOjE3MDY1NTQwNjUsImV4cCI6MTcwNzQxODA2NX0.6mf8vox4rDxFevhBl0D5Q4UYF_Q-zjFbdFfU6AR3M0E
+
 ### SOFT DELETE USER
 DELETE http://localhost:8090/api/v1/user-accounts/1
 
@@ -18,9 +39,15 @@ DELETE http://localhost:8090/api/v1/user-accounts/1
 OPTIONS http://localhost:8090/api/v1/user-accounts/1
 Origin: http://127.0.0.1:5173
 
+
+//Saving a variable
+> {%
+    client.global.set("bearer_token", response.body.json.token);
+%}
 ### PRODUCT
 POST http://localhost:8090/api/v1/properties
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcnVuQHlvcG1haS5jb20iLCJpYXQiOjE3MDU1ODc4NzUsImV4cCI6MTcwNjQ1MTg3NX0.zc_Of0yJO7YK051919tetgvdRXMrE-ZEYZlsip0qCuI
 
 {
   "id": null,
@@ -40,6 +67,7 @@ Content-Type: application/json
 ###
 POST http://localhost:8090/api/v1/properties
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcnVuQHlvcG1haS5jb20iLCJpYXQiOjE3MDU1ODc4NzUsImV4cCI6MTcwNjQ1MTg3NX0.zc_Of0yJO7YK051919tetgvdRXMrE-ZEYZlsip0qCuI
 
 {
   "id": null,
@@ -92,6 +120,18 @@ Content-Type: application/json
   "description": "drssrsrsrs gfgf huhuh"
 }
 
+### Property Request from browser
+
+
+#{"id":"","title":"one house","propertyType":"APARTMENT","allocatedPrice":"7000","pricePerUnit":"70000","occupied":"true","totalRooms":"0","addressType":"P","wardNo":"7","streetName":"new street name","streetNameNp":"null","googleLocation":"null","totalBathRooms":"7","totalBedRooms":"null","totalLivingRooms":"5","totalExternalBathRooms":"null","imageFiles":"[object Object],[object Object]","ownerId":"1","description":"this is a good property that you guys want for yourself.","multipartFiles":[{},{}]}
+
+
+### Property meta info
+GET http://localhost:8090/api/v1/properties/get-info
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcnVuQHlvcG1haS5jb20iLCJpYXQiOjE3MDU1ODc4NzUsImV4cCI6MTcwNjQ1MTg3NX0.zc_Of0yJO7YK051919tetgvdRXMrE-ZEYZlsip0qCuI
+
+
+
 ### CREATE NEW OWNER
 POST http://localhost:8090/api/v1/owners
 Content-Type: application/json
@@ -112,6 +152,7 @@ GET http://localhost:8090/api/v1/properties/1
 ### REGISTER NEW TENANT
 POST http://localhost:8090/api/v1/tenants
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcnVuQHlvcG1haS5jb20iLCJpYXQiOjE3MDU1ODc4NzUsImV4cCI6MTcwNjQ1MTg3NX0.zc_Of0yJO7YK051919tetgvdRXMrE-ZEYZlsip0qCuI
 
 {
   "id": 0,
@@ -120,7 +161,8 @@ Content-Type: application/json
   "nameNp": "nameNp_9eb43b437fd5",
   "netWorth": 5000,
   "occupation": "occupation_5bc61ffe41a0",
-  "phoneNo": "9812908127",
+  "phoneNo": "9812908027",
+  "email": "email@gmail.com",
   "address": {
     "id": null,
     "wardNo": 4,

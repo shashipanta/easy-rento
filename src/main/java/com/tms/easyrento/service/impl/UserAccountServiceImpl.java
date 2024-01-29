@@ -1,24 +1,32 @@
 package com.tms.easyrento.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tms.easyrento.config.security.util.JwtUtils;
 import com.tms.easyrento.dto.request.LoginRequest;
+import com.tms.easyrento.dto.request.OwnerRequest;
+import com.tms.easyrento.dto.request.TenantRequest;
 import com.tms.easyrento.dto.request.UserRequest;
 import com.tms.easyrento.dto.response.LoginResponse;
+import com.tms.easyrento.dto.response.UserDetailsResponse;
 import com.tms.easyrento.dto.response.UserResponse;
+import com.tms.easyrento.enums.UserType;
 import com.tms.easyrento.mappers.UserAccountMapper;
 import com.tms.easyrento.model.UserAccount;
 import com.tms.easyrento.repository.UserAccountRepository;
+import com.tms.easyrento.service.OwnerService;
+import com.tms.easyrento.service.TenantService;
 import com.tms.easyrento.service.UserAccountService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.nio.channels.AcceptPendingException;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,17 +40,38 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserAccountServiceImpl implements UserAccountService {
 
+    private final OwnerService ownerService;
+    private final TenantService tenantService;
+
     private final UserAccountRepository userAccountRepo;
     private final AuthenticationManager authenticationManager;
     private final UserAccountMapper userAccountMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Lazy private final JwtUtils jwtUtils;
+
+    private final ObjectMapper objectMapper;
+
     @Override
     public Long create(UserRequest request) {
         UserAccount userAccount = userAccountMapper.requestToEntity(request);
         // password encryption
         userAccount.setPassword(passwordEncoder.encode(userAccount.getPassword()));
+
+        // create owner or tenant account based on portal
+        String userType = request.getUserType().name();
+        Long id;
+        if(UserType.OWNER.name().equals(userType)) {
+            OwnerRequest ownerRequest = objectMapper.convertValue(request, OwnerRequest.class);
+            ownerRequest.setName(request.getUsername());
+            ownerRequest.setNameNp("nepali_name");
+            id = ownerService.create(ownerRequest);
+        } else {
+            TenantRequest tenantRequest = objectMapper.convertValue(request, TenantRequest.class);
+            tenantRequest.setName(request.getUsername());
+            tenantRequest.setNameNp("nepali_name");
+            id = tenantService.create(tenantRequest);
+        }
         return userAccountRepo.save(userAccount).getId();
     }
 
@@ -71,7 +100,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Override
     public Optional<UserAccount> fetchUserAccountByUsername(String username) {
 
-        return userAccountRepo.findUserAccountByUsername(username);
+        return userAccountRepo.findBy(username);
     }
 
     @Override
@@ -81,12 +110,45 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         // token generation
         String token = jwtUtils.generateToken(authentication);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        UserAccount userAccount = fetchUserAccountByUsername(userDetails.getUsername())
+                .orElseThrow();
+        Long tenantId = null;
+        Long ownerId = null;
+
+        if(userAccount.getUserType().name().equals(UserType.TENANT.name()))
+            tenantId = userAccount.getId();
+        else
+            ownerId = userAccount.getId();
 
         return LoginResponse.builder()
-                .refreshToken(token)
-                .accessToken("access_token")
+                .refreshToken("refresh_token")
+                .ownerId(ownerId)
+                .tenantId(tenantId)
+                .accessToken(token)
                 .expiryTime("expiry_time")
                 .build();
+    }
+
+    @Override
+    public Long getId(String username) {
+        return userAccountRepo.findBy(username)
+                .orElseThrow(EntityNotFoundException::new).getId();
+    }
+
+    @Override
+    public UserDetailsResponse details(String token) {
+        Object o = jwtUtils.customClaims("userId", token);
+        UserAccount userAccount = userAccountRepo.findById(Long.valueOf(o.toString())).orElseThrow();
+        UserDetailsResponse userDetailsResponse = objectMapper.convertValue(userAccount, UserDetailsResponse.class);
+        String userType = userAccount.getUserType().name();
+        if(UserType.OWNER.name().equals(userType))
+            userDetailsResponse.setOwnerId(userAccount.getId());
+        else
+            userDetailsResponse.setTenantId(userAccount.getId());
+
+        return userDetailsResponse;
     }
 
     public Authentication authenticateUser(LoginRequest loginRequest) {
@@ -94,7 +156,7 @@ public class UserAccountServiceImpl implements UserAccountService {
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
         );
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication( authentication);
 
         return authentication;
     }

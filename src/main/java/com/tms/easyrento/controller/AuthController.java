@@ -1,6 +1,7 @@
 package com.tms.easyrento.controller;
 
 import com.tms.easyrento.dto.request.LoginRequest;
+import com.tms.easyrento.dto.request.UserDetailsRequest;
 import com.tms.easyrento.dto.request.UserRequest;
 import com.tms.easyrento.globals.BaseController;
 import com.tms.easyrento.globals.GlobalApiResponse;
@@ -57,11 +58,18 @@ public class AuthController extends BaseController {
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<GlobalApiResponse> handleAuthentication(@RequestBody LoginRequest loginRequest, Authentication authentication) {
+    public ResponseEntity<GlobalApiResponse> handleAuthentication(@RequestBody LoginRequest loginRequest) {
         // Your authentication logic here
         return new ResponseEntity<>(successResponse("success",
                 userAccountService.generateToken(loginRequest)),
         HttpStatus.OK);
+    }
+
+    @PostMapping("/details")
+    public ResponseEntity<GlobalApiResponse> getLoggedInUserDetails(@Valid @RequestBody UserDetailsRequest request) {
+        return new ResponseEntity<>(successResponse("success",
+                userAccountService.details(request.getAuthToken())),
+                HttpStatus.OK);
     }
 
 
