@@ -1,5 +1,6 @@
 package com.tms.easyrento.service.impl;
 
+import com.tms.easyrento.dto.request.DynamicPricingRequest;
 import com.tms.easyrento.dto.request.PropertyRequest;
 import com.tms.easyrento.dto.request.RentalOfferRequest;
 import com.tms.easyrento.dto.response.PropertyMetaDataResponse;
@@ -9,13 +10,16 @@ import com.tms.easyrento.mappers.PropertyMapper;
 import com.tms.easyrento.mappers.RentalOfferMapper;
 import com.tms.easyrento.model.file.PropertyImage;
 import com.tms.easyrento.model.property.Property;
+import com.tms.easyrento.repository.PropertyImageRepo;
 import com.tms.easyrento.repository.PropertyRepo;
 import com.tms.easyrento.repository.RentalOfferRepo;
+import com.tms.easyrento.service.DynamicPricingService;
 import com.tms.easyrento.service.OwnerService;
 import com.tms.easyrento.service.PropertyService;
 import com.tms.easyrento.util.file.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -33,12 +37,13 @@ import java.util.stream.Collectors;
 public class PropertyServiceImpl implements PropertyService {
 
     private final PropertyRepo propertyRepo;
+    private final PropertyImageRepo propertyImageRepo;
     private final OwnerService ownerService;
+    private final DynamicPricingService dynamicPricingService;
 
     private final PropertyMapper propertyMapper;
     private final RentalOfferMapper rentalOfferMapper;
     private final RentalOfferRepo rentalOfferRepo;
-
 
     @Override
     public Long create(PropertyRequest request) {
@@ -64,7 +69,27 @@ public class PropertyServiceImpl implements PropertyService {
         setLandPropertyInfo(property);
         property.setPropertyImage(propertyImages);
 
+        // Get Dynamic Price
+        DynamicPricingRequest dynamicPricingRequest = toDynamicPricingRequest(request);
+        Long dynamicPrice = dynamicPricingService.getDynamicPrice(dynamicPricingRequest);
+        property.setDynamicPrice(dynamicPrice);
+
         return propertyRepo.save(property).getId();
+    }
+
+    // TODO: change the default values
+    private DynamicPricingRequest toDynamicPricingRequest(PropertyRequest request) {
+        return DynamicPricingRequest.builder()
+                .total_rooms(String.valueOf(request.getTotalRooms()))
+                .total_bedrooms(String.valueOf(request.getTotalBedRooms()))
+                .total_living_rooms(String.valueOf(request.getTotalLivingRooms()))
+                .hotwater(String.valueOf(1))
+                .location("City")
+                .electricity("Yes")
+                .parking(String.valueOf(1))
+                .terrace(String.valueOf(1))
+                .markets(String.valueOf(1))
+                .build();
     }
 
     private void setLandPropertyInfo(Property property) {
@@ -91,9 +116,42 @@ public class PropertyServiceImpl implements PropertyService {
     public List<PropertyResponse> read(String isActive) {
         List<Property> propertyList = propertyRepo.findByActive(isActive);
 
-        return propertyList.stream()
-                .map(propertyMapper::entityToResponse)
+        List<PropertyResponse> propertyResponses = new ArrayList<>();
+        // get property Image
+        propertyList.forEach(
+                property ->
+                    setPropertyImages(property, propertyResponses)
+        );
+
+//        return propertyList.stream()
+//                .map(propertyMapper::entityToResponse)
+//                .toList();
+
+        return propertyResponses;
+    }
+
+    private void setPropertyImages(Property property, List<PropertyResponse> propertyResponses) {
+
+        List<PropertyImage> propertyImageById = propertyImageRepo.getPropertyImageById(property.getId());
+        List<String> propertyImages = propertyImageById.stream()
+                .map(this::mapPropertyImageToString)
                 .toList();
+
+        PropertyResponse build = PropertyResponse.builder()
+                .id(property.getId())
+                .images(propertyImages)
+                .propertyTitle(property.getTitle())
+                .propertyType(String.valueOf(property.getPropertyType()))
+                .active(property.isActive())
+                .allocatedPrice(property.getAllocatedPrice())
+                .dynamicPrice(property.getDynamicPrice())
+                .pricePerUnit(property.getPricePerUnit())
+                .occupied(property.isOccupied())
+                .createdOn(String.valueOf(property.getCreatedOn()))
+                .totalRooms(property.getTotalRooms())
+                .build();
+
+        propertyResponses.add(build);
     }
 
     @Override
@@ -136,6 +194,11 @@ public class PropertyServiceImpl implements PropertyService {
         return propertyRepo.getPropertyByOwnerId(ownerId)
                 .stream()
                 .map(propertyMapper::entityToResponse)
-                .collect(Collectors.toList());
+                .toList();
+    }
+
+    protected String mapPropertyImageToString(PropertyImage propertyImage) {
+        //TODO Implement mapping
+        return propertyImage.getFileName();
     }
 }

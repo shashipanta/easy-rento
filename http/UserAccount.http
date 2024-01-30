@@ -21,6 +21,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcnVuQHlvcG1haWwuY29tIiwid
   "authToken": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcnVuQHlvcG1haWwuY29tIiwidXNlcklkIjoxLCJpYXQiOjE3MDY1MjgwNjUsImV4cCI6MTcwNzM5MjA2NX0.-tScDoAzFlwpaYv8INBDjLHEAONeQHeUmHqCcAzVv4o"
 }
 
+### all property
+GET http://localhost:8090/api/v1/properties/get-info/all
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInN1YiI6ImFydW5AeW9wbWFpbC5jb20iLCJpYXQiOjE3MDY1NTQwNjUsImV4cCI6MTcwNzQxODA2NX0.6mf8vox4rDxFevhBl0D5Q4UYF_Q-zjFbdFfU6AR3M0E
+
 ### GET OFFERS FOR TENANTS
 GET http://localhost:8090/api/v1/owners/get-offers/2
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcnVuQHlvcG1haWwuY29tIiwidXNlcklkIjoxLCJpYXQiOjE3MDY1MjgwNjUsImV4cCI6MTcwNzM5MjA2NX0.-tScDoAzFlwpaYv8INBDjLHEAONeQHeUmHqCcAzVv4o

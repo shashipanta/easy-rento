@@ -36,6 +36,12 @@ public class PropertyRequest {
 
     private Short totalRooms;
 
+    private Short totalBathRooms = 1;
+
+    private Short totalBedRooms = 1;
+
+    private Short totalLivingRooms = 1;
+
     @NotNull(message = FieldErrorConstants.NOT_NULL)
     private Long ownerId;
 

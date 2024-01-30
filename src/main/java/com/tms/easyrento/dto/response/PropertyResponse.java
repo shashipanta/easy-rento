@@ -15,6 +15,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@Builder
 public class PropertyResponse {
 
     private Long id;
