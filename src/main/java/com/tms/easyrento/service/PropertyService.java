@@ -4,6 +4,7 @@ import com.tms.easyrento.dto.request.PropertyRequest;
 import com.tms.easyrento.dto.request.RentalOfferRequest;
 import com.tms.easyrento.dto.response.PropertyMetaDataResponse;
 import com.tms.easyrento.dto.response.PropertyResponse;
+import com.tms.easyrento.dto.response.SinglePropertyResponse;
 import com.tms.easyrento.model.property.Property;
 
 import java.util.List;
@@ -21,5 +22,13 @@ public interface PropertyService extends CurdService<PropertyRequest, Property, 
     Boolean rentalRequest(RentalOfferRequest rentRequest);
 
     List<PropertyResponse> getBy(Long ownerId);
+
+    List<PropertyResponse> getAll(String isActive);
+
+    PropertyResponse getPropertyInfo(Long propertyId);
+
+    List<PropertyResponse> getPropertyBy();
+
+    List<SinglePropertyResponse> getSinglePropertyInfo(Long propertyId);
 
 }

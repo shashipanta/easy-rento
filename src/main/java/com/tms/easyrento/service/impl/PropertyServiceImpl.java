@@ -1,10 +1,12 @@
 package com.tms.easyrento.service.impl;
 
+import com.tms.easyrento.config.security.service.JwtService;
 import com.tms.easyrento.dto.request.DynamicPricingRequest;
 import com.tms.easyrento.dto.request.PropertyRequest;
 import com.tms.easyrento.dto.request.RentalOfferRequest;
 import com.tms.easyrento.dto.response.PropertyMetaDataResponse;
 import com.tms.easyrento.dto.response.PropertyResponse;
+import com.tms.easyrento.dto.response.SinglePropertyResponse;
 import com.tms.easyrento.enums.PropertyType;
 import com.tms.easyrento.mappers.PropertyMapper;
 import com.tms.easyrento.mappers.RentalOfferMapper;
@@ -19,13 +21,11 @@ import com.tms.easyrento.service.PropertyService;
 import com.tms.easyrento.util.file.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * @author shashi
@@ -42,8 +42,11 @@ public class PropertyServiceImpl implements PropertyService {
     private final DynamicPricingService dynamicPricingService;
 
     private final PropertyMapper propertyMapper;
+    private final com.tms.easyrento.dbMappers.PropertyMapper iPropertyMapper;
     private final RentalOfferMapper rentalOfferMapper;
     private final RentalOfferRepo rentalOfferRepo;
+
+    private final JwtService jwtService;
 
     @Override
     public Long create(PropertyRequest request) {
@@ -114,45 +117,10 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public List<PropertyResponse> read(String isActive) {
-        List<Property> propertyList = propertyRepo.findByActive(isActive);
-
-        List<PropertyResponse> propertyResponses = new ArrayList<>();
-        // get property Image
-        propertyList.forEach(
-                property ->
-                    setPropertyImages(property, propertyResponses)
-        );
-
-//        return propertyList.stream()
-//                .map(propertyMapper::entityToResponse)
-//                .toList();
-
-        return propertyResponses;
+        List<PropertyResponse> activeList = iPropertyMapper.findActiveList(isActive);
+        return activeList;
     }
 
-    private void setPropertyImages(Property property, List<PropertyResponse> propertyResponses) {
-
-        List<PropertyImage> propertyImageById = propertyImageRepo.getPropertyImageById(property.getId());
-        List<String> propertyImages = propertyImageById.stream()
-                .map(this::mapPropertyImageToString)
-                .toList();
-
-        PropertyResponse build = PropertyResponse.builder()
-                .id(property.getId())
-                .images(propertyImages)
-                .propertyTitle(property.getTitle())
-                .propertyType(String.valueOf(property.getPropertyType()))
-                .active(property.isActive())
-                .allocatedPrice(property.getAllocatedPrice())
-                .dynamicPrice(property.getDynamicPrice())
-                .pricePerUnit(property.getPricePerUnit())
-                .occupied(property.isOccupied())
-                .createdOn(String.valueOf(property.getCreatedOn()))
-                .totalRooms(property.getTotalRooms())
-                .build();
-
-        propertyResponses.add(build);
-    }
 
     @Override
     public PropertyResponse read(Long aLong) {
@@ -192,13 +160,49 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public List<PropertyResponse> getBy(Long ownerId) {
         return propertyRepo.getPropertyByOwnerId(ownerId)
-                .stream()
+                .stream().map(this::toPropertyResponse)
+                .toList();
+    }
+
+    public PropertyResponse toPropertyResponse(Property property){
+        return PropertyResponse.builder()
+                .dynamicPrice(property.getDynamicPrice())
+                .propertyTitle(property.getTitle())
+                .id(property.getId())
+                .allocatedPrice(property.getAllocatedPrice())
+                .propertyType(property.getPropertyType().name())
+                .occupied(property.isOccupied())
+                .createdOn(String.valueOf(property.getCreatedOn()))
+                .pricePerUnit(property.getPricePerUnit())
+                .build();
+    }
+
+    @Override
+    public List<PropertyResponse> getAll(String isActive) {
+        List<Property> propertyList = propertyRepo.findByActive(isActive);
+        return propertyList.stream()
                 .map(propertyMapper::entityToResponse)
                 .toList();
     }
 
-    protected String mapPropertyImageToString(PropertyImage propertyImage) {
-        //TODO Implement mapping
-        return propertyImage.getFileName();
+    @Override
+    public PropertyResponse getPropertyInfo(Long propertyId) {
+        // todo: add string constants for this "userId"
+        Long ownerId = Long.valueOf(jwtService.extractClaimForLoggedInUser("userId"));
+        PropertyResponse singlePropertyByOwnerId = iPropertyMapper.findSinglePropertyByOwnerId(ownerId, propertyId);
+        return singlePropertyByOwnerId;
+
     }
+
+    @Override
+    public List<PropertyResponse> getPropertyBy() {
+        Long ownerId = jwtService.getLoggedUserId();
+        return iPropertyMapper.findPropertiesByOwnerId(ownerId);
+    }
+
+    @Override
+    public List<SinglePropertyResponse> getSinglePropertyInfo(Long propertyId) {
+        return iPropertyMapper.getSinglePropertyForAdmin(propertyId);
+    }
+
 }

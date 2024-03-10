@@ -18,6 +18,5 @@ public class LoginResponse {
     private String accessToken;
     private String refreshToken;
     private String expiryTime;
-    private Long ownerId;
-    private Long tenantId;
+    private Long userId;
 }

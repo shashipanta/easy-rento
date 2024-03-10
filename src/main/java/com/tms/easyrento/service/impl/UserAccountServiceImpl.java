@@ -22,8 +22,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -60,17 +60,15 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         // create owner or tenant account based on portal
         String userType = request.getUserType().name();
-        Long id;
+
         if(UserType.OWNER.name().equals(userType)) {
             OwnerRequest ownerRequest = objectMapper.convertValue(request, OwnerRequest.class);
             ownerRequest.setName(request.getUsername());
             ownerRequest.setNameNp("nepali_name");
-            id = ownerService.create(ownerRequest);
         } else {
             TenantRequest tenantRequest = objectMapper.convertValue(request, TenantRequest.class);
             tenantRequest.setName(request.getUsername());
             tenantRequest.setNameNp("nepali_name");
-            id = tenantService.create(tenantRequest);
         }
         return userAccountRepo.save(userAccount).getId();
     }
@@ -110,22 +108,15 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         // token generation
         String token = jwtUtils.generateToken(authentication);
+
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         UserAccount userAccount = fetchUserAccountByUsername(userDetails.getUsername())
-                .orElseThrow();
-        Long tenantId = null;
-        Long ownerId = null;
-
-        if(userAccount.getUserType().name().equals(UserType.TENANT.name()))
-            tenantId = userAccount.getId();
-        else
-            ownerId = userAccount.getId();
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         return LoginResponse.builder()
                 .refreshToken("refresh_token")
-                .ownerId(ownerId)
-                .tenantId(tenantId)
+                .userId(userAccount.getId())
                 .accessToken(token)
                 .expiryTime("expiry_time")
                 .build();
@@ -155,8 +146,6 @@ public class UserAccountServiceImpl implements UserAccountService {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
         );
-
-        SecurityContextHolder.getContext().setAuthentication( authentication);
 
         return authentication;
     }

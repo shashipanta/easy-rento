@@ -10,4 +10,8 @@ public interface JwtService {
     String extractClaim(String token, String claimName);
 
     String extractUserId(String token, String claimName);
+
+    String extractClaimForLoggedInUser(String claimName);
+
+    Long getLoggedUserId();
 }

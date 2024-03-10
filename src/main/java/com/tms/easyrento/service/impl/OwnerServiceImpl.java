@@ -1,5 +1,6 @@
 package com.tms.easyrento.service.impl;
 
+import com.tms.easyrento.config.security.service.JwtService;
 import com.tms.easyrento.dto.request.OwnerRequest;
 import com.tms.easyrento.dto.response.OwnerResponse;
 import com.tms.easyrento.dto.response.RentalOfferResponse;
@@ -31,6 +32,8 @@ public class OwnerServiceImpl implements OwnerService {
 
     private final OwnerMapper ownerMapper;
     private final ContractRepo contractRepo;
+
+    private final JwtService jwtService;
 
     @Override
     public OwnerResponse read(Long aLong) {
@@ -84,12 +87,14 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
-    public List<RentalOfferResponse> rentalOffers(Long ownerId) {
+    public List<RentalOfferResponse> rentalOffers() {
+        Long ownerId = Long.valueOf(jwtService.extractClaimForLoggedInUser("userId"));
         return rentalOfferService.getOffers(ownerId);
     }
 
     @Override
-    public Integer rentOfferCounts(Long ownerId) {
+    public Integer rentOfferCounts() {
+        Long ownerId = jwtService.getLoggedUserId();
         return Math.toIntExact(rentalOfferService.totalOffersBy(ownerId));
     }
 }
