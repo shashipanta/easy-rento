@@ -11,7 +11,7 @@ import com.tms.easyrento.dto.response.UserDetailsResponse;
 import com.tms.easyrento.dto.response.UserResponse;
 import com.tms.easyrento.enums.UserType;
 import com.tms.easyrento.mappers.UserAccountMapper;
-import com.tms.easyrento.model.UserAccount;
+import com.tms.easyrento.model.auth.UserAccount;
 import com.tms.easyrento.repository.UserAccountRepository;
 import com.tms.easyrento.service.OwnerService;
 import com.tms.easyrento.service.TenantService;

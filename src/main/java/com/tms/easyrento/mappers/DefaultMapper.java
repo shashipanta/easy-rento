@@ -1,8 +1,5 @@
 package com.tms.easyrento.mappers;
 
-import com.tms.easyrento.dto.request.UserRequest;
-import com.tms.easyrento.dto.response.UserResponse;
-import com.tms.easyrento.model.UserAccount;
 import org.mapstruct.*;
 
 /**

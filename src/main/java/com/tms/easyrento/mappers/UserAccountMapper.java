@@ -2,11 +2,8 @@ package com.tms.easyrento.mappers;
 
 import com.tms.easyrento.dto.request.UserRequest;
 import com.tms.easyrento.dto.response.UserResponse;
-import com.tms.easyrento.model.AbstractAuditor;
-import com.tms.easyrento.model.UserAccount;
+import com.tms.easyrento.model.auth.UserAccount;
 import org.mapstruct.*;
-
-import static org.springframework.boot.cloud.CloudPlatform.getActive;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserAccountMapper {

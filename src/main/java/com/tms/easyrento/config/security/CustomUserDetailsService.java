@@ -1,17 +1,12 @@
 package com.tms.easyrento.config.security;
 
-import com.tms.easyrento.model.UserAccount;
-import com.tms.easyrento.repository.UserAccountRepository;
+import com.tms.easyrento.model.auth.UserAccount;
 import com.tms.easyrento.service.UserAccountService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * @author shashi

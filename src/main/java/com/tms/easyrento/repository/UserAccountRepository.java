@@ -1,6 +1,6 @@
 package com.tms.easyrento.repository;
 
-import com.tms.easyrento.model.UserAccount;
+import com.tms.easyrento.model.auth.UserAccount;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

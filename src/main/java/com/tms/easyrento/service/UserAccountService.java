@@ -5,7 +5,7 @@ import com.tms.easyrento.dto.request.UserRequest;
 import com.tms.easyrento.dto.response.LoginResponse;
 import com.tms.easyrento.dto.response.UserDetailsResponse;
 import com.tms.easyrento.dto.response.UserResponse;
-import com.tms.easyrento.model.UserAccount;
+import com.tms.easyrento.model.auth.UserAccount;
 
 import java.util.List;
 import java.util.Optional;

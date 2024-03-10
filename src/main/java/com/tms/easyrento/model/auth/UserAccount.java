@@ -1,12 +1,10 @@
-package com.tms.easyrento.model;
+package com.tms.easyrento.model.auth;
 
 import com.tms.easyrento.enums.UserType;
+import com.tms.easyrento.model.AbstractAuditor;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 
 /**
