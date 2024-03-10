@@ -1,7 +1,9 @@
 package com.tms.easyrento.config.security.service;
 
+import com.tms.easyrento.config.security.JwtAuthenticationToken;
 import com.tms.easyrento.config.security.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,6 +26,18 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String extractUserId(String token, String claimName) {
         return jwtUtils.customClaims(claimName, token);
+    }
+
+    @Override
+    public String extractClaimForLoggedInUser(String claimName) {
+        JwtAuthenticationToken authentication = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        return extractClaim(authentication.getToken(), claimName);
+    }
+
+    @Override
+    public Long getLoggedUserId() {
+        JwtAuthenticationToken authenticationToken = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        return Long.valueOf(extractClaim(authenticationToken.getToken(), "userId"));
     }
 
 

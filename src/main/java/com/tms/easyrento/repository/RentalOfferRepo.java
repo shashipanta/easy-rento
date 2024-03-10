@@ -37,8 +37,8 @@ public interface RentalOfferRepo extends JpaRepository<RentalOffer, Long> {
                            p.dynamic_price      as propertyDynamicPrice
                         
                     FROM rent_offers r_o
-                        inner join owners o     on r_o.owner_id = o.id
-                        inner join tenants t    on r_o.tenant_id = t.id
+                        inner join owners     o on r_o.owner_id    = o.id
+                        inner join tenants    t on r_o.tenant_id   = t.id
                         inner join properties p on r_o.property_id = p.id
                     where r_o.owner_id = ?
                         and r_o.status <> 'REJECTED'

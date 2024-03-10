@@ -55,19 +55,19 @@ public class OwnerController extends BaseController {
                 HttpStatus.OK);
     }
 
-    @GetMapping("/get-offers/{id}")
-    public ResponseEntity<GlobalApiResponse> getRentalOffers(@PathVariable(value = "id") Long ownerId) {
+    @GetMapping("/get-offers")
+    public ResponseEntity<GlobalApiResponse> getRentalOffers() {
 
         return new ResponseEntity<>(successResponse("success",
-                ownerService.rentalOffers(ownerId)),
+                ownerService.rentalOffers()),
                 HttpStatus.OK);
     }
 
-    @GetMapping("/get-offers-count/{id}")
-    public ResponseEntity<GlobalApiResponse> getRentalOfferCounts(@PathVariable(value = "id") Long ownerId) {
+    @GetMapping("/get-offers-count")
+    public ResponseEntity<GlobalApiResponse> getRentalOfferCounts() {
 
         return new ResponseEntity<>(successResponse("success",
-                ownerService.rentOfferCounts(ownerId)),
+                ownerService.rentOfferCounts()),
                 HttpStatus.OK);
     }
 

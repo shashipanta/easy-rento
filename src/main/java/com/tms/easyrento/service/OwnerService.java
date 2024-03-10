@@ -31,8 +31,8 @@ public interface OwnerService extends CurdService<OwnerRequest, Owner, OwnerResp
 
     List<TenantResponse> associatedTenants();
 
-    List<RentalOfferResponse> rentalOffers(Long ownerId);
+    List<RentalOfferResponse> rentalOffers();
 
-    Integer rentOfferCounts(Long ownerId);
+    Integer rentOfferCounts();
 
 }
