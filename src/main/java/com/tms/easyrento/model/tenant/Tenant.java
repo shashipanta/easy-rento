@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 import static jakarta.persistence.CascadeType.ALL;
 
 /**
@@ -63,8 +65,7 @@ public class Tenant extends AbstractAuditor {
         @JoinColumn(name = "address_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_tenants_addresses_id"))
         private Address address;
 
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "contract_id", foreignKey = @ForeignKey(name = "fk_tenants_contracts_id"))
-        private Contract contract;
+        @OneToMany(fetch = FetchType.LAZY, mappedBy = "tenant")
+        private List<Contract> contract;
 
 }

@@ -19,7 +19,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class CorsGlobalConfig implements WebMvcConfigurer{
 
-    private final String[] allowedOrigins = {"http://127.0.0.1:5173", "http://localhost:5173"};
+    private final String[] allowedOrigins = {
+            "http://127.0.0.1:5173",
+            "http://localhost:5173",
+            "http://localhost:5174",
+            "http://127.0.0.1:5174"
+    };
 
     /**
      * Configure "global" cross-origin request processing. The configured CORS

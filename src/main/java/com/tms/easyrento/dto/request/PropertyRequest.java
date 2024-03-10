@@ -23,6 +23,9 @@ public class PropertyRequest {
     private String propertyCode;
 
     @NotBlank(message = FieldErrorConstants.NOT_BLANK)
+    private String propertyTitle;
+
+    @NotBlank(message = FieldErrorConstants.NOT_BLANK)
     private String propertyType;
 
     @NotNull(message = FieldErrorConstants.NOT_NULL)
@@ -32,6 +35,12 @@ public class PropertyRequest {
     private Long pricePerUnit;
 
     private Short totalRooms;
+
+    private Short totalBathRooms = 1;
+
+    private Short totalBedRooms = 1;
+
+    private Short totalLivingRooms = 1;
 
     @NotNull(message = FieldErrorConstants.NOT_NULL)
     private Long ownerId;
@@ -51,6 +60,9 @@ public class PropertyRequest {
     private String googleLocation;
 
     private String description;
+
+    private boolean occupied = false;
+
 
 //    private List<PropertyImageRequest> imageFiles;
 

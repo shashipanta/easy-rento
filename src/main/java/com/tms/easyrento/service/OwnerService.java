@@ -2,6 +2,8 @@ package com.tms.easyrento.service;
 
 import com.tms.easyrento.dto.request.OwnerRequest;
 import com.tms.easyrento.dto.response.OwnerResponse;
+import com.tms.easyrento.dto.response.RentalOfferResponse;
+import com.tms.easyrento.dto.response.TenantResponse;
 import com.tms.easyrento.model.owner.Owner;
 
 import java.util.List;
@@ -27,5 +29,10 @@ public interface OwnerService extends CurdService<OwnerRequest, Owner, OwnerResp
 
     Boolean terminateContract(Long contractId);
 
+    List<TenantResponse> associatedTenants();
+
+    List<RentalOfferResponse> rentalOffers(Long ownerId);
+
+    Integer rentOfferCounts(Long ownerId);
 
 }

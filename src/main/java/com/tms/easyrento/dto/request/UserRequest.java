@@ -1,8 +1,10 @@
 package com.tms.easyrento.dto.request;
 
 import com.tms.easyrento.constants.FieldErrorConstants;
+import com.tms.easyrento.enums.UserType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,5 +30,6 @@ public class UserRequest {
     @NotBlank(message = FieldErrorConstants.NOT_BLANK)
     private String email;
 
-
+    @NotNull(message = FieldErrorConstants.NOT_NULL)
+    private UserType userType = UserType.TENANT;
 }

@@ -2,7 +2,10 @@ package com.tms.easyrento.service;
 
 import com.tms.easyrento.dto.request.ContractRequest;
 import com.tms.easyrento.dto.response.ContractResponse;
+import com.tms.easyrento.dto.response.TenantResponse;
 import com.tms.easyrento.model.contract.Contract;
+
+import java.util.List;
 
 /**
  * @author shashi
@@ -14,4 +17,6 @@ public interface ContractService extends CurdService<ContractRequest,Contract, C
     boolean terminateContract(Long contractId, String remarks);
 
     boolean approveContract(Long contractId);
+
+    List<TenantResponse> getAssociatedTenants(Long ownerId);
 }

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * @author shashi
@@ -14,11 +15,14 @@ import java.sql.Timestamp;
 
 @Getter
 @Setter
+@Builder
 public class PropertyResponse {
 
     private Long id;
 
     private String propertyCode;
+
+    private String propertyTitle;
 
     private String propertyType;
 
@@ -41,5 +45,8 @@ public class PropertyResponse {
     private OwnerResponse ownerResponse;
 
     private AddressResponse addressResponse;
+
+    // for images
+    private List<String> images;
 
 }

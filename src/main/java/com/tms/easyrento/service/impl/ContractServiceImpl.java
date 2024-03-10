@@ -2,7 +2,9 @@ package com.tms.easyrento.service.impl;
 
 import com.tms.easyrento.dto.request.ContractRequest;
 import com.tms.easyrento.dto.response.ContractResponse;
+import com.tms.easyrento.dto.response.TenantResponse;
 import com.tms.easyrento.mappers.ContractMapper;
+import com.tms.easyrento.mappers.TenantMapper;
 import com.tms.easyrento.model.contract.Contract;
 import com.tms.easyrento.model.owner.Owner;
 import com.tms.easyrento.model.tenant.Tenant;
@@ -10,10 +12,12 @@ import com.tms.easyrento.repository.ContractRepo;
 import com.tms.easyrento.repository.OwnerRepo;
 import com.tms.easyrento.repository.TenantRepo;
 import com.tms.easyrento.service.ContractService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author shashi
@@ -29,6 +33,7 @@ public class ContractServiceImpl implements ContractService {
 
     private final ContractMapper contractMapper;
     private final TenantRepo tenantRepo;
+    private final TenantMapper tenantMapper;
 
     @Override
     public Long create(ContractRequest request) {
@@ -80,18 +85,33 @@ public class ContractServiceImpl implements ContractService {
         List<Owner> owners = ownerRepo.getAssociatedOwnersByContractId(contractId);
         List<Tenant> tenants = tenantRepo.getAssociatedTenantsByContractId(contractId);
 
-        Boolean allOwnersNotRejected = owners.stream()
-                .anyMatch(owner -> !owner.getContract().getOwnerTerminated());
-        Boolean allTenantsNotRejected = tenants.stream()
-                .anyMatch(tenant -> !tenant.getContract().getTenantTerminated());
+        // perform database query to verify termination
 
-        return !(allTenantsNotRejected && allOwnersNotRejected);
+        // if owner and tenant has termination then update status to TERMINATED
 
+//        return !(allTenantsNotRejected && allOwnersNotRejected);
+
+        return true;
     }
 
     @Override
     public boolean approveContract(Long contractId) {
         contractRepo.approveContract(contractId);
         return Boolean.TRUE;
+    }
+
+    @Override
+    public List<TenantResponse> getAssociatedTenants(Long ownerId) {
+        // call repo
+        List<Long> associatedTenantId = contractRepo.getAssociatedTenantId(ownerId);
+
+        return associatedTenantId.stream()
+                .map(this::toTenantResponse)
+                .collect(Collectors.toList());
+    }
+
+    private TenantResponse toTenantResponse(Long id) {
+        Tenant tenant = tenantRepo.findById(id).orElseThrow(() -> new EntityNotFoundException("Tenant not found!"));
+        return tenantMapper.entityToResponse(tenant);
     }
 }

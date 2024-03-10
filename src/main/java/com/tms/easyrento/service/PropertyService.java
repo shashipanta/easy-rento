@@ -1,9 +1,12 @@
 package com.tms.easyrento.service;
 
 import com.tms.easyrento.dto.request.PropertyRequest;
+import com.tms.easyrento.dto.request.RentalOfferRequest;
 import com.tms.easyrento.dto.response.PropertyMetaDataResponse;
 import com.tms.easyrento.dto.response.PropertyResponse;
 import com.tms.easyrento.model.property.Property;
+
+import java.util.List;
 
 /**
  * @author shashi
@@ -14,5 +17,9 @@ public interface PropertyService extends CurdService<PropertyRequest, Property, 
 
     // Get meta information related to property
     PropertyMetaDataResponse getPropertyMetaInfo();
+
+    Boolean rentalRequest(RentalOfferRequest rentRequest);
+
+    List<PropertyResponse> getBy(Long ownerId);
 
 }

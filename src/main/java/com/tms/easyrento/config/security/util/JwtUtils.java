@@ -1,17 +1,13 @@
 package com.tms.easyrento.config.security.util;
 
-import com.tms.easyrento.config.security.CustomUserDetails;
 import com.tms.easyrento.config.security.CustomUserDetailsService;
+import com.tms.easyrento.config.security.JwtAuthenticationToken;
 import com.tms.easyrento.config.security.property.JwtProperty;
+import com.tms.easyrento.service.UserAccountService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import org.hibernate.validator.constraints.CodePointLength;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * @author shashi
@@ -32,11 +30,14 @@ public class JwtUtils {
 
     private final JwtProperty jwtProperty;
     private final CustomUserDetailsService customUserDetailsService;
+    private final UserAccountService userAccountService;
 
     JwtUtils(@Lazy JwtProperty jwtProperty,
-             @Lazy CustomUserDetailsService customUserDetailsService) {
+             @Lazy CustomUserDetailsService customUserDetailsService,
+             @Lazy UserAccountService userAccountService) {
         this.jwtProperty = jwtProperty;
         this.customUserDetailsService = customUserDetailsService;
+        this.userAccountService = userAccountService;
     }
 
     private static String SECRET_KEY;
@@ -45,15 +46,23 @@ public class JwtUtils {
     public String generateToken(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
+        Long loggedUserId = userAccountService.getId(userDetails.getUsername());
+
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + EXPIRATION_TIME);
 
-        return Jwts.builder()
+        Map<String, Object> customClaims = Map.of("userId", loggedUserId);
+
+        String token = Jwts.builder()
                 .setSubject(userDetails.getUsername())
+                .setClaims(Map.of("sub", userDetails.getUsername(), "userId", loggedUserId))
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(getSigningKey())
                 .compact();
+
+        return token;
+
     }
 
     private Key getSigningKey() {
@@ -62,19 +71,28 @@ public class JwtUtils {
     }
 
     public Authentication getAuthentication(String token) {
-        Claims claims = extractClaims(token);
-
+        Claims claims = extractAllClaims(token);
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(claims.getSubject());
-
-        return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), "", userDetails.getAuthorities());
+//        return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), "", userDetails.getAuthorities());
+        return new JwtAuthenticationToken(token, userDetails.getAuthorities());
     }
 
-    public Claims extractClaims(String token) {
+    public Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(jwtProperty.getSecretKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    // extract certain claims
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    public <T> T customClaims(String claimName, String token) {
+        return extractClaim(token, claims -> (T) claims.get(claimName) );
     }
 
     public boolean validateToken(String token) {

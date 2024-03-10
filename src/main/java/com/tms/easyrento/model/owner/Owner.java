@@ -40,7 +40,6 @@ public class Owner extends AbstractAuditor {
     @JoinColumn(name = "address_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_owners_address_id"))
     private Address address;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contract_id", foreignKey = @ForeignKey(name = "fk_owners_contracts_id"))
-    private Contract contract;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
+    private List<Contract> contract;
 }

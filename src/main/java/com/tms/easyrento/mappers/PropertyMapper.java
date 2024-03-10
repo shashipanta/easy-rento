@@ -28,6 +28,7 @@ public interface PropertyMapper extends DefaultMapper<PropertyRequest, Property,
     @Mapping(source = "googleLocation", target = "address.googleLocation")
     @Mapping(source = "streetName", target = "address.streetName")
     @Mapping(source = "addressType", target = "address.addressType")
+    @Mapping(source = "propertyTitle", target = "title")
 //    @Mapping(target = "imageUrl", ignore = true)
     Property requestToEntity(PropertyRequest propertyRequest);
 
@@ -40,6 +41,7 @@ public interface PropertyMapper extends DefaultMapper<PropertyRequest, Property,
     @Mapping(source = "active", target = "active")
     @Mapping(source = "createdOn", target = "createdOn", dateFormat = "dd-MM-yyyy HH:mm:ss")
     @Mapping(source = "owner", target = "ownerResponse")
+    @Mapping(source = "title", target = "propertyTitle")
     PropertyResponse entityToResponse(Property property);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
