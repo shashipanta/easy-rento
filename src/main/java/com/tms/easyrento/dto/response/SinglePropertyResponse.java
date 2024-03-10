@@ -1,21 +1,18 @@
 package com.tms.easyrento.dto.response;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 /**
  * @author shashi
  * @version 1.0.0
- * @since 12/7/23 9:36 PM
+ * @since 3/1/24 2:52 PM
  */
-
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class PropertyResponse {
+public class SinglePropertyResponse {
 
     private Long id;
 
@@ -41,20 +38,8 @@ public class PropertyResponse {
 
     private String createdOn;
 
-    private OwnerResponse ownerResponse;
+    private ImageResponse featuredImage;
 
-    private AddressResponse addressResponse;
-
-    // for images
-    private List<String> images;
-
-    private List<PropertyImageResponse> propertyImages;
-
-    @Getter
-    @Setter
-    public static class PropertyImageResponse {
-        private Long id;
-        private List<String> images;
-    }
+    private List<ImageResponse> secondaryImages;
 
 }

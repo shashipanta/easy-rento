@@ -41,25 +41,32 @@ public class PropertyController extends BaseController {
 
     @PostMapping(value = "/file-upload")
     ResponseEntity<GlobalApiResponse> uploadFile(@RequestPart("files") MultipartFile file) {
-        String originalFilename = file.getOriginalFilename();
         return  new ResponseEntity<>(successResponse("success",
                 null),
                 HttpStatus.OK);
     }
 
     @GetMapping("/get-info/{id}")
-    ResponseEntity<GlobalApiResponse> getProductById(@Valid @PathVariable("id") Long productId) {
+    ResponseEntity<GlobalApiResponse> getPropertyForPublic(@Valid @PathVariable("id") Long propertyId) {
 
         return new ResponseEntity<>(successResponse("success",
-                propertyService.read(productId)),
+                propertyService.getSinglePropertyInfo(propertyId)),
                 HttpStatus.OK);
     }
 
-    @GetMapping("/get/{ownerId}")
-    ResponseEntity<GlobalApiResponse> getPropertyByOwnerId(@Valid @PathVariable("ownerId") Long ownerId) {
+    @GetMapping("/owner")
+    ResponseEntity<GlobalApiResponse> getPropertyForOwner() {
 
         return new ResponseEntity<>(successResponse("success",
-                propertyService.getBy(ownerId)),
+                propertyService.getPropertyBy()),
+                HttpStatus.OK);
+    }
+
+    @GetMapping("/get/{id}")
+    ResponseEntity<GlobalApiResponse> getPropertyByOwnerId(@Valid @PathVariable("id") Long propertyId) {
+
+        return new ResponseEntity<>(successResponse("success",
+                propertyService.getPropertyInfo(propertyId)),
                 HttpStatus.OK);
     }
 
@@ -73,7 +80,15 @@ public class PropertyController extends BaseController {
     }
 
     @GetMapping("/get-info/all")
-    ResponseEntity<GlobalApiResponse> getProducts(@RequestParam(value = "isActive", defaultValue = "1") String isActive) {
+    ResponseEntity<GlobalApiResponse> getProperties(@RequestParam(value = "isActive", defaultValue = "1") String isActive) {
+
+        return new ResponseEntity<>(successResponse("success",
+                propertyService.read(isActive)),
+                HttpStatus.OK);
+    }
+
+    @GetMapping("/get")
+    ResponseEntity<GlobalApiResponse> getAllProducts(@RequestParam(value = "isActive", defaultValue = "1") String isActive) {
 
         return new ResponseEntity<>(successResponse("success",
                 propertyService.read(isActive)),

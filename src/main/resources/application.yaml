@@ -25,8 +25,14 @@ logging:
   level:
     org.springframework.web: debug
     org.springframework.security: debug
+    com.tms.easyrento.dbMappers: debug
 
 # jwt property
 jwt:
   secret-key: X7BSnMS4e12M0Sz/4IWr+VPNK6vpAee5LfhaM3scjiU=
   token-expiration-in-minutes: 1
+
+# identify mybatis mapper
+mybatis:
+  mapper-locations: classpath*:**/mappers/*Mapper.xml
+  type-aliases-package: classpath*:**/java/com/tms/easyrento/dto/**

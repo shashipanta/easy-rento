@@ -1,20 +1,11 @@
 package com.tms.easyrento.mappers;
 
-import com.tms.easyrento.dto.request.PropertyImageRequest;
 import com.tms.easyrento.dto.request.PropertyRequest;
 import com.tms.easyrento.dto.response.PropertyResponse;
 import com.tms.easyrento.model.owner.Owner;
 import com.tms.easyrento.model.property.Property;
-import com.tms.easyrento.repository.PropertyRepo;
 import com.tms.easyrento.service.OwnerService;
-import com.tms.easyrento.service.PropertyService;
-import com.tms.easyrento.service.impl.PropertyServiceImpl;
-import lombok.RequiredArgsConstructor;
 import org.mapstruct.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE,
@@ -42,6 +33,7 @@ public interface PropertyMapper extends DefaultMapper<PropertyRequest, Property,
     @Mapping(source = "createdOn", target = "createdOn", dateFormat = "dd-MM-yyyy HH:mm:ss")
     @Mapping(source = "owner", target = "ownerResponse")
     @Mapping(source = "title", target = "propertyTitle")
+    @Mapping(source = "systemEvaluatedPrice", target = "isSystemEvaluatedPrice")
     PropertyResponse entityToResponse(Property property);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
