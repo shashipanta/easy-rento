@@ -172,7 +172,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     private ResponseEntity<GlobalApiResponse> handleBadCredentialsException(BadCredentialsException bce) {
 
-        return new ResponseEntity<>(GlobalApiResponse.builder().message(bce.getMessage()).build(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(GlobalApiResponse.builder()
+                .message("Username or password not matching")
+                .status(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .data(null)
+                .build(),
+                HttpStatus.BAD_REQUEST);
 
     }
 
