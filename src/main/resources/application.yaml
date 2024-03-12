@@ -19,6 +19,8 @@ spring:
     open-in-view: true
     hibernate:
       ddl-auto: update
+  flyway:
+    baseline-on-migrate: true
 
 # logging
 logging:
@@ -36,3 +38,5 @@ jwt:
 mybatis:
   mapper-locations: classpath*:**/mappers/*Mapper.xml
   type-aliases-package: classpath*:**/java/com/tms/easyrento/dto/**
+
+# FLYWAY

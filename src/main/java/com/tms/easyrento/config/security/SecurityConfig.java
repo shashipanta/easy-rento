@@ -56,7 +56,7 @@ public class SecurityConfig {
     }
 
     /**
-     * AuthenticationManager given by ProviderManager is used to authenticate user's credentials
+     * {@link AuthenticationManager} given by ProviderManager is used to authenticate user's credentials
      * DaoAuthenticationProvider makes use of userDetailsService with passwordEncoder to authenticate
      * @return
      */
