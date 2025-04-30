@@ -38,8 +38,8 @@ public class Role extends AbstractAuditor {
             name = "roles_permissions",
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id"),
-            foreignKey = @ForeignKey(name = "fk_roles_permissions-id"),
-            inverseForeignKey = @ForeignKey(name = "fk_permissions_roles-id")
+            foreignKey = @ForeignKey(name = "fk_roles_permissions_id"),
+            inverseForeignKey = @ForeignKey(name = "fk_permissions_roles_id")
     )
     private List<Permission> permissions;
 

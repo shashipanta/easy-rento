@@ -1,13 +1,12 @@
 package com.tms.easyrento.config.cors;
 
-import jakarta.validation.Valid;
+import com.tms.easyrento.config.security.authority.AuthorizationInterceptor;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -19,6 +18,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class CorsGlobalConfig implements WebMvcConfigurer{
 
+    private final AuthorizationInterceptor authorizationInterceptor;
     private final String[] allowedOrigins = {
             "http://127.0.0.1:5173",
             "http://localhost:5173",
@@ -46,7 +46,16 @@ public class CorsGlobalConfig implements WebMvcConfigurer{
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(allowedOrigins)
+                .allowedHeaders("Authorization", "Content-Type")
+                .exposedHeaders("Authorization")
+                .allowCredentials(true)
                 .allowedMethods("*");
         WebMvcConfigurer.super.addCorsMappings(registry);
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(authorizationInterceptor);
+        WebMvcConfigurer.super.addInterceptors(registry);
     }
 }

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DatabaseMigrationSettings" lastSelectedDirectory="src/main/resources/db/migration" />
+  <component name="JpaLiquibaseChangesConfig">
+    <exclude-change idName="addresses_seq" tagName="createSequence" />
+    <exclude-change idName="contracts_seq" tagName="createSequence" />
+    <exclude-change idName="owners_seq" tagName="createSequence" />
+    <exclude-change idName="FK_CONTRACTS_OWNERS_ID" tagName="addForeignKeyConstraint" />
+    <exclude-change idName="FK_CONTRACTS_TENANTS_ID" tagName="addForeignKeyConstraint" />
+    <exclude-change idName="FK_OWNERS_ADDRESS_ID" tagName="addForeignKeyConstraint" />
+    <exclude-change idName="FK_PROPERTIES_ADDRESSES_ID" tagName="addForeignKeyConstraint" />
+    <exclude-change idName="FK_PROPERTIES_OWNERS_ID" tagName="addForeignKeyConstraint" />
+    <exclude-change idName="FK_PROPERTY-IMAGES_PROPERTY-ID" tagName="addForeignKeyConstraint" />
+    <exclude-change idName="FK_TENANTS_ADDRESSES_ID" tagName="addForeignKeyConstraint" />
+    <exclude-change idName="fk_roles_permissions-id" tagName="addForeignKeyConstraint" />
+    <exclude-change idName="fk_roles_permissions-idMvUtc5" tagName="addForeignKeyConstraint" />
+    <exclude-change idName="properties#address_id" tagName="addUniqueConstraint" />
+    <exclude-change idName="properties#property_code" tagName="addUniqueConstraint" />
+    <exclude-change idName="roles#name" tagName="addUniqueConstraint" />
+    <exclude-change idName="tenants#email" tagName="addUniqueConstraint" />
+    <exclude-change idName="tenants#phone_no" tagName="addUniqueConstraint" />
+    <exclude-change idName="user_accounts#email" tagName="addUniqueConstraint" />
+    <exclude-change idName="user_accounts#user_name" tagName="addUniqueConstraint" />
+    <exclude-change idName="properties" tagName="createTable" />
+    <exclude-change idName="property_images" tagName="createTable" />
+    <exclude-change idName="rent_offers" tagName="createTable" />
+    <exclude-change idName="roles" tagName="createTable" />
+    <exclude-change idName="roles_permissions" tagName="createTable" />
+    <exclude-change idName="tenants" tagName="createTable" />
+    <exclude-change idName="user_accounts" tagName="createTable" />
+    <exclude-change idName="properties_seq" tagName="createSequence" />
+    <exclude-change idName="property_images_seq" tagName="createSequence" />
+    <exclude-change idName="rent_offers_seq" tagName="createSequence" />
+    <exclude-change idName="roles_seq" tagName="createSequence" />
+    <exclude-change idName="tenants_seq" tagName="createSequence" />
+    <exclude-change idName="user_accounts_seq" tagName="createSequence" />
+    <exclude-change idName="addresses" tagName="createTable" />
+    <exclude-change idName="contracts" tagName="createTable" />
+    <exclude-change idName="owners" tagName="createTable" />
+    <exclude-change idName="permissions" tagName="createTable" />
+    <exclude-change idName="permissions#" tagName="addUniqueConstraint" />
+    <exclude-change idName="permissions_seq" tagName="createSequence" />
+  </component>
+  <component name="PersistenceUnitSettings">
+    <persistence-units>
+      <persistence-unit name="Default" defaultSearchScope="Project">
+        <packages>
+          <package value="com.tms.easyrento" />
+        </packages>
+      </persistence-unit>
+    </persistence-units>
+  </component>
+</project>

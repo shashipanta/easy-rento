@@ -25,13 +25,16 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Long> 
     void toggleIsActive(Long id, boolean isActive);
 
 
-    @Query(value = "SELECT * \n" +
-            "FROM user_accounts ua \n" +
-            "WHERE CASE\n" +
-            "          WHEN ?1 = 1 then ua.active = true \n" +
-            "          WHEN ?1 = 0 then ua.active = false \n" +
-            "          ELSE ua.active = ua.active \n" +
-            "          END", nativeQuery = true)
+    @Query(value = """
+            SELECT * 
+            FROM user_accounts ua 
+            WHERE CASE
+                      WHEN ?1 = 1 then ua.active = true 
+                      WHEN ?1 = 0 then ua.active = false 
+                      ELSE ua.active = ua.active 
+            END
+                      """,
+            nativeQuery = true)
     List<UserAccount> getAll(Long isActive);
 
     @Query(nativeQuery = true,

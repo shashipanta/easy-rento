@@ -40,7 +40,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserAccountServiceImpl implements UserAccountService {
 
-    private final OwnerService ownerService;
     private final TenantService tenantService;
 
     private final UserAccountRepository userAccountRepo;
@@ -48,7 +47,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     private final UserAccountMapper userAccountMapper;
     private final PasswordEncoder passwordEncoder;
 
-    @Lazy private final JwtUtils jwtUtils;
+    private final JwtUtils jwtUtils;
 
     private final ObjectMapper objectMapper;
 

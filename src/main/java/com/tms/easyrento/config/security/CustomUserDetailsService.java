@@ -1,7 +1,7 @@
 package com.tms.easyrento.config.security;
 
 import com.tms.easyrento.model.auth.UserAccount;
-import com.tms.easyrento.service.UserAccountService;
+import com.tms.easyrento.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,10 +18,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserAccountService userAccountService;
+    private final UserAccountRepository userAccountRepo;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserAccount userAccount = userAccountService.fetchUserAccountByUsername(username)
+        UserAccount userAccount = userAccountRepo.findBy(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 
         return org.springframework.security.core.userdetails.User.builder()

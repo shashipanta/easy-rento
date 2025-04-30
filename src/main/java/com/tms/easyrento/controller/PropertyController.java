@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,7 +33,8 @@ public class PropertyController extends BaseController {
     private static final String PROPERTY_IMAGE_LOCATION = System.getProperty("user.home") + File.separator + "PROPERTY_IMAGE";
 
     @PostMapping
-    ResponseEntity<GlobalApiResponse> createProduct( @ModelAttribute @Valid PropertyRequest propertyRequest) {
+    @PreAuthorize("hasPermission(#this.this.permissionName, 'R')")
+    public ResponseEntity<GlobalApiResponse> createProduct( @ModelAttribute @Valid PropertyRequest propertyRequest) {
 
         return new ResponseEntity<>(successResponse("created",
                 propertyService.create(propertyRequest)),
@@ -47,7 +49,8 @@ public class PropertyController extends BaseController {
     }
 
     @GetMapping("/get-info/{id}")
-    ResponseEntity<GlobalApiResponse> getPropertyForPublic(@Valid @PathVariable("id") Long propertyId) {
+    @PreAuthorize("hasPermission(#this.this.permissionName,'R')")
+    public ResponseEntity<GlobalApiResponse> getPropertyForPublic(@Valid @PathVariable("id") Long propertyId) {
 
         return new ResponseEntity<>(successResponse("success",
                 propertyService.getSinglePropertyInfo(propertyId)),
@@ -88,7 +91,7 @@ public class PropertyController extends BaseController {
     }
 
     @GetMapping("/get")
-    ResponseEntity<GlobalApiResponse> getAllProducts(@RequestParam(value = "isActive", defaultValue = "1") String isActive) {
+    ResponseEntity<GlobalApiResponse> getAllProperties(@RequestParam(value = "isActive", defaultValue = "1") String isActive) {
 
         return new ResponseEntity<>(successResponse("success",
                 propertyService.read(isActive)),

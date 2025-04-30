@@ -10,6 +10,12 @@ public class BaseController {
     public static final String SUCCESS = "success";
     public static final String FAILURE = "failure";
 
+    protected String permissionName = this.getClass().getSimpleName();
+
+    public String getPermissionName() {
+        return permissionName;
+    }
+
     public GlobalApiResponse successResponse(String message, Object data) {
         return GlobalApiResponse
                 .builder()

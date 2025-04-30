@@ -31,8 +31,8 @@ public class JwtUtils {
     private final CustomUserDetailsService customUserDetailsService;
     private final UserAccountService userAccountService;
 
-    JwtUtils(@Lazy JwtProperty jwtProperty,
-             @Lazy CustomUserDetailsService customUserDetailsService,
+    JwtUtils(JwtProperty jwtProperty,
+             CustomUserDetailsService customUserDetailsService,
              @Lazy UserAccountService userAccountService) {
         this.jwtProperty = jwtProperty;
         this.customUserDetailsService = customUserDetailsService;

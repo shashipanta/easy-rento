@@ -23,6 +23,4 @@ public class ContractRequest {
     private String ownerFullName;
     private String contractStartDate;
     private Long rentPerMonth;
-
-
 }

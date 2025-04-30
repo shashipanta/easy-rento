@@ -39,8 +39,14 @@ public class JsonWebTokenFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+        // there is no authorization token in case of preflight requests : OPTIONS
+        if ("OPTIONS".equals(request.getMethod())) {
+            logger.info("Preflight request: METHOD NAME : {}, REQUEST URI : {}", request.getMethod(), request.getRequestURI());
+            filterChain.doFilter(request, response);
+        }
         try {
             String token = extractToken(request);
+            logger.info("Token received : {}", token);
             if (token != null && jwtUtils.validateToken(token)) {
                 Authentication authentication = jwtUtils.getAuthentication(token);
                 if (authentication != null) {

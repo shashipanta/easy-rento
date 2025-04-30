@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author shashi
@@ -107,7 +106,7 @@ public class ContractServiceImpl implements ContractService {
 
         return associatedTenantId.stream()
                 .map(this::toTenantResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private TenantResponse toTenantResponse(Long id) {

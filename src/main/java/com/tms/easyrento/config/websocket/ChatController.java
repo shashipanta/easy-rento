@@ -21,6 +21,10 @@ public class ChatController {
         return chatMessage;
     }
 
+    /*
+        Register new user: /chat.addUser
+        Server sends message: /topic/public
+     */
     @MessageMapping("/chat.addUser")
     @SendTo("/topic/public")
     public ChatMessage addUser(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
