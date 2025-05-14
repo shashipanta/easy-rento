@@ -7,7 +7,7 @@ spring:
   datasource:
     username: postgres
     password: postgres
-    url: jdbc:postgresql://172.21.0.2:5432/tms_db
+    url: jdbc:postgresql://localhost:5432/tms_db
   servlet:
     multipart:
       enabled: true
