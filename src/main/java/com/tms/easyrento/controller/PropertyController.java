@@ -33,7 +33,7 @@ public class PropertyController extends BaseController {
     private static final String PROPERTY_IMAGE_LOCATION = System.getProperty("user.home") + File.separator + "PROPERTY_IMAGE";
 
     @PostMapping
-    @PreAuthorize("hasPermission(#this.this.permissionName, 'R')")
+//    @PreAuthorize("hasPermission(#this.this.permissionName, 'R')")
     public ResponseEntity<GlobalApiResponse> createProduct( @ModelAttribute @Valid PropertyRequest propertyRequest) {
 
         return new ResponseEntity<>(successResponse("created",
