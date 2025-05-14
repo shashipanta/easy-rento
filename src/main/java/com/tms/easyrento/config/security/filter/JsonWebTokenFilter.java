@@ -3,6 +3,7 @@ package com.tms.easyrento.config.security.filter;
 import com.tms.easyrento.config.security.util.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * @author shashi
@@ -29,6 +31,7 @@ public class JsonWebTokenFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
     private static final String AUTH_HEADER = "Authorization";
+    private static final String AUTH_COOKIE_HEADER_NAME = "accessToken";
     private static final String BEARER = "Bearer";
 
     private static final Logger logger = LoggerFactory.getLogger(JsonWebTokenFilter.class);
@@ -61,12 +64,26 @@ public class JsonWebTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * Extract token from either header or from cookie
+     * @param request
+     * @return
+     */
     private String extractToken(HttpServletRequest request) {
         // Extract and return the token from the Authorization header
         // ...
         String bearerToken = request.getHeader(AUTH_HEADER);
         if(StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER)) {
             return bearerToken.substring(7);
+        }
+        if (request.getCookies() != null) {
+            String cookieAuthToken = null;
+            cookieAuthToken = Arrays.stream(request.getCookies())
+                    .filter(cookie -> cookie.getName().equals(AUTH_COOKIE_HEADER_NAME))
+                    .map(Cookie::getValue)
+                    .findFirst()
+                    .orElse(null);
+            return cookieAuthToken;
         }
         return null;
     }
