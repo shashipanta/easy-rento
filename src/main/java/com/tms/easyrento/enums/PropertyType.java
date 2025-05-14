@@ -35,7 +35,4 @@ public enum PropertyType {
         return propertyTypes;
     }
 
-
-
-
 }

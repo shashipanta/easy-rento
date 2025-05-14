@@ -49,7 +49,7 @@ public class PropertyController extends BaseController {
     }
 
     @GetMapping("/get-info/{id}")
-    @PreAuthorize("hasPermission(#this.this.permissionName,'R')")
+//    @PreAuthorize("hasPermission(#this.this.permissionName,'R')")
     public ResponseEntity<GlobalApiResponse> getPropertyForPublic(@Valid @PathVariable("id") Long propertyId) {
 
         return new ResponseEntity<>(successResponse("success",

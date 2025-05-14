@@ -36,4 +36,7 @@ public class PropertyImage extends AbstractAuditor {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "fk_property-images_property-id"))
     private Property property;
+
+    @Column(name = "featured", columnDefinition = "boolean default false ", nullable = false)
+    private boolean featured = false;
 }
