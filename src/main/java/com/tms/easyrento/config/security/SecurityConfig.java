@@ -26,7 +26,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
-    private JsonWebTokenFilter jsonWebTokenFilter;
+    private final JsonWebTokenFilter jsonWebTokenFilter;
+
     SecurityConfig(@Lazy CustomUserDetailsService customUserDetailsService,
                    @Lazy JsonWebTokenFilter jsonWebTokenFilter) {
         this.customUserDetailsService = customUserDetailsService;

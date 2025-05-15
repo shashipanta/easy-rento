@@ -33,5 +33,5 @@ public interface UserAccountService {
 
     Long getId(String username);
 
-    UserDetailsResponse details(String token);
+    UserDetailsResponse details();
 }

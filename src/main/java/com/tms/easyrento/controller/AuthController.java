@@ -65,10 +65,10 @@ public class AuthController extends BaseController {
         HttpStatus.OK);
     }
 
-    @PostMapping("/details")
-    public ResponseEntity<GlobalApiResponse> getLoggedInUserDetails(@Valid @RequestBody UserDetailsRequest request) {
+    @GetMapping("/details")
+    public ResponseEntity<GlobalApiResponse> getLoggedInUserDetails() {
         return new ResponseEntity<>(successResponse("success",
-                userAccountService.details(request.getAuthToken())),
+                userAccountService.details()),
                 HttpStatus.OK);
     }
 

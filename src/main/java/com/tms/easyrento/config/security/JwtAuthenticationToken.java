@@ -1,5 +1,6 @@
 package com.tms.easyrento.config.security;
 
+import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -10,6 +11,7 @@ import java.util.Collection;
  * @version 1.0.0
  * @since 1/29/24 4:41 PM
  */
+@Getter
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
     private final String token;
@@ -36,7 +38,4 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
         return null;
     }
 
-    public String getToken() {
-        return token;
-    }
 }

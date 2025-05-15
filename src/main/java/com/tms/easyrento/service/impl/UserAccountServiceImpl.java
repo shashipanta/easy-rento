@@ -1,6 +1,7 @@
 package com.tms.easyrento.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tms.easyrento.config.security.service.JwtServiceImpl;
 import com.tms.easyrento.config.security.util.JwtUtils;
 import com.tms.easyrento.dto.request.LoginRequest;
 import com.tms.easyrento.dto.request.OwnerRequest;
@@ -128,9 +129,9 @@ public class UserAccountServiceImpl implements UserAccountService {
     }
 
     @Override
-    public UserDetailsResponse details(String token) {
-        Object o = jwtUtils.customClaims("userId", token);
-        UserAccount userAccount = userAccountRepo.findById(Long.valueOf(o.toString())).orElseThrow();
+    public UserDetailsResponse details() {
+        Long userId = jwtUtils.getLoggedUserId();
+        UserAccount userAccount = userAccountRepo.findById(userId).orElseThrow();
         UserDetailsResponse userDetailsResponse = objectMapper.convertValue(userAccount, UserDetailsResponse.class);
         String userType = userAccount.getUserType().name();
         if(UserType.OWNER.name().equals(userType))

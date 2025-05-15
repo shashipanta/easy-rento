@@ -10,6 +10,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -104,6 +105,12 @@ public class JwtUtils {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public  Long getLoggedUserId() {
+        JwtAuthenticationToken authenticationToken = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        Object userId = customClaims("userId", authenticationToken.getToken());
+        return Long.valueOf(userId.toString());
     }
 
 }

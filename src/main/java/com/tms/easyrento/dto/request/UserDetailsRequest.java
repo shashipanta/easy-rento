@@ -1,7 +1,5 @@
 package com.tms.easyrento.dto.request;
 
-import com.tms.easyrento.constants.FieldErrorConstants;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +14,5 @@ import lombok.Setter;
 public class UserDetailsRequest {
     private Long userId;
 
-    @NotNull(message = FieldErrorConstants.NOT_NULL)
     private String authToken;
 }
