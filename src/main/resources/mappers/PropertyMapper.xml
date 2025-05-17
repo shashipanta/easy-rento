@@ -101,7 +101,7 @@
 
         FROM properties p
         inner join property_images p_i on p.id = p_i.property_id
-        where p.owner_id = #{ownerId}
+        where p.owner_id = #{ownerId} and p.active = true
     </select>
 
     <select id="getSinglePropertyForAdmin" resultMap="singlePropertyInfo">

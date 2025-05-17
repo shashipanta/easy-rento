@@ -1,7 +1,9 @@
 package com.tms.easyrento.repository;
 
 import com.tms.easyrento.model.property.Property;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -25,7 +27,9 @@ public interface PropertyRepo extends JpaRepository<Property, Long> {
     List<Property> findByActive(String isActive);
 
 
-    @Query(value = "UPDATE properties p SET p.active = not p.active WHERE p.id = ?1", nativeQuery = true)
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE properties p SET active = not p.active WHERE p.id = ?1", nativeQuery = true)
     void toggleActiveStatus(Long id);
 
 
