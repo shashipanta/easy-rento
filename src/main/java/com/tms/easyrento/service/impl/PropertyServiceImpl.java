@@ -106,7 +106,7 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     private String generateRandomPropertyCode(String propertyType) {
-        return propertyType.toUpperCase() + UUID.randomUUID();
+        return UUID.randomUUID().toString();
     }
 
     @Override
