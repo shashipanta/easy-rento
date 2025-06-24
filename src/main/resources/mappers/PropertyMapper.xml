@@ -39,21 +39,26 @@
 
 
     <select id="findSinglePropertyByOwnerId" resultMap="propertyMap">
-        select p.id as id,
-        p.property_code as propertyCode,
-        p.title as propertyTitle,
-        p.property_type as propertyType,
-        p.allocated_price as allocatedPrice,
-        p.price_per_unit as pricePerUnit,
-        p.is_system_evaluated_price as isSystemEvaluatedPrice,
-        p.occupied as occupied,
-        p.dynamic_price as dynamicPrice,
-        p.total_rooms as totalRooms,
+        select
+            p.id                        as id,
+            p.property_code             as propertyCode,
+            p.title                     as propertyTitle,
+            p.property_type             as propertyType,
+            p.allocated_price           as allocatedPrice,
+            p.price_per_unit            as pricePerUnit,
+            a.street_name               as streetName,
+            a.ward_no                   as wardNo,
+            p.is_system_evaluated_price as isSystemEvaluatedPrice,
+            p.occupied                  as occupied,
+            p.dynamic_price             as dynamicPrice,
+            p.total_rooms               as totalRooms,
+            p.description               as description,
 
-        p_i.file_name as fileName
+            p_i.file_name               as fileName
 
         from properties p
-        inner join property_images p_i on p.id = p_i.property_id
+            inner join property_images p_i on p.id = p_i.property_id
+            left join addresses a on p.address_id = a.id
         where p.owner_id = #{ownerId} and p.id = #{propertyId}
 
     </select>
