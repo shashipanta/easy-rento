@@ -112,7 +112,7 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public Long update(PropertyRequest request, Long aLong) {
         Property property = propertyRepo.findById(aLong).orElseThrow();
-        return propertyMapper.partialUpdate(request, property).getId();
+        return propertyRepo.save(propertyMapper.partialUpdate(request, property)).getId();
     }
 
     @Override

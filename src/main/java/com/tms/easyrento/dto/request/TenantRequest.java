@@ -2,8 +2,7 @@ package com.tms.easyrento.dto.request;
 
 import com.tms.easyrento.constants.FieldErrorConstants;
 import com.tms.easyrento.enums.Gender;
-import com.tms.easyrento.model.Address;
-import com.tms.easyrento.util.NepaliPhoneNumber;
+import com.tms.easyrento.util.annotations.NepaliPhoneNumber;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;

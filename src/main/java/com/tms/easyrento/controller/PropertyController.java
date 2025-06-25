@@ -1,5 +1,6 @@
 package com.tms.easyrento.controller;
 
+import com.tms.easyrento.dto.common.DTOGroups;
 import com.tms.easyrento.dto.request.PropertyRequest;
 import com.tms.easyrento.globals.BaseController;
 import com.tms.easyrento.globals.GlobalApiResponse;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -74,7 +76,7 @@ public class PropertyController extends BaseController {
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<GlobalApiResponse> updateProperty(@Valid @RequestBody PropertyRequest request,
+    ResponseEntity<GlobalApiResponse> updateProperty(@Validated(DTOGroups.UpdateGroup.class) @ModelAttribute PropertyRequest request,
                                                     @PathVariable("id") Long propertyId) {
 
         return new ResponseEntity<>(successResponse("updated",

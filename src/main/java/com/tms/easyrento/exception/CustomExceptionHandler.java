@@ -39,6 +39,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String PREFIX_FOREIGN = "fk";
 
     private static final String NOT_NULL = "NotNull";
+    private static final String CONDITIONAL_NOT_NULL = "ConditionalNotNull";
     private static final String NOT_BLANK = "NotBlank";
     private static final String NOT_EMPTY = "NotEmpty";
 
@@ -145,7 +146,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                                String defaultMessage, List<String> errors) {
         try {
             switch (errorCode) {
-                case NOT_NULL, NOT_BLANK, NOT_EMPTY ->
+                case NOT_NULL, CONDITIONAL_NOT_NULL,
+                     NOT_BLANK, NOT_EMPTY ->
                     /*
                         defaultMessage = {0} not.null
                         errorFieldValidationCode = phone

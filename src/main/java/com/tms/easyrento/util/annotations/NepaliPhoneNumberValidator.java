@@ -1,4 +1,4 @@
-package com.tms.easyrento.util;
+package com.tms.easyrento.util.annotations;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

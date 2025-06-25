@@ -50,11 +50,6 @@ public class PropertyResponse {
 
     private List<PropertyImageResponse> propertyImages;
 
-    // for edit operation
-    private String streetName;
-
-    private Short wardNo;
-
     private String description;
 
     @Getter

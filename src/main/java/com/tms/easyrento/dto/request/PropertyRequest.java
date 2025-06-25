@@ -2,6 +2,8 @@ package com.tms.easyrento.dto.request;
 
 import com.tms.easyrento.constants.FieldErrorConstants;
 import com.tms.easyrento.enums.PropertyType;
+import com.tms.easyrento.util.annotations.ConditionalNotNull;
+import com.tms.easyrento.util.annotations.ConditionalValidator;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -63,10 +65,7 @@ public class PropertyRequest {
 
     private boolean occupied = false;
 
-
-//    private List<PropertyImageRequest> imageFiles;
-
-    @NotNull(message = FieldErrorConstants.NOT_NULL)
+    @ConditionalNotNull(message = FieldErrorConstants.NOT_NULL, operationType = ConditionalValidator.OperationType.CREATE)
     private List<MultipartFile> multipartFiles;
 
 }

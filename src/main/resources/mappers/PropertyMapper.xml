@@ -8,9 +8,18 @@
 
     <resultMap id="propertyMap" type="com.tms.easyrento.dto.response.PropertyResponse" autoMapping="true">
         <id property="id" column="id"/>
+
+        <association property="addressResponse"
+                     javaType="com.tms.easyrento.dto.response.AddressResponse"
+                     autoMapping="true"
+                     columnPrefix="address_">
+            <id column="id" property="id"/>
+        </association>
+
         <collection property="images" ofType="java.lang.String" javaType="list">
             <result column="fileName"/>
         </collection>
+
     </resultMap>
 
     <resultMap id="propertyList" type="com.tms.easyrento.dto.response.PropertyResponse" autoMapping="true">
@@ -46,8 +55,9 @@
             p.property_type             as propertyType,
             p.allocated_price           as allocatedPrice,
             p.price_per_unit            as pricePerUnit,
-            a.street_name               as streetName,
-            a.ward_no                   as wardNo,
+            a.address_type              as address_addressType,
+            a.street_name               as address_streetName,
+            a.ward_no                   as address_wardNo,
             p.is_system_evaluated_price as isSystemEvaluatedPrice,
             p.occupied                  as occupied,
             p.dynamic_price             as dynamicPrice,
