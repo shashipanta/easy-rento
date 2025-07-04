@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="eng">
+<head th:replace="fragments/head :: head('Policy Form')" />
+<body class="bg-gray-100 min-h-screen">
+
+<div th:replace="fragments/nav :: navbar"></div>
+
+<div class="max-w-3xl mx-auto p-6 bg-white rounded shadow mt-8">
+
+    <h1 class="text-2xl font-bold mb-6" th:text="${policy.id == null} ? 'Create Policy' : 'Edit Policy'"></h1>
+
+    <form th:action="@{/admin/policies/save}" th:object="${policy}" method="post" class="space-y-6">
+
+        <input type="hidden" th:field="*{id}"/>
+
+        <!-- Policy Name -->
+        <div>
+            <label for="name" class="block mb-1 font-semibold">Policy Name</label>
+            <input id="name" type="text" th:field="*{name}" placeholder="Enter policy name"
+                   class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        </div>
+
+        <div x-data="policyForm()" x-init="init()" class="space-y-6">
+
+            <input type="hidden" th:field="*{controllerName}" x-model="selectedController" />
+            <input type="hidden" th:field="*{httpMethod}" x-model="httpMethod" />
+            <input type="hidden" th:field="*{resourcePattern}" x-model="resourcePattern" />
+
+            <!-- Controller -->
+            <div>
+                <label for="controller" class="block mb-1 font-semibold">Controller</label>
+                <select id="controller" x-model="selectedController" class="w-full border border-gray-300 rounded px-3 py-2">
+                    <option value="" disabled >Select Controller</option>
+                    <template x-for="[controllerName, methods] in Object.entries(endpointsByController)" :key="controllerName">
+                        <option :value="controllerName" x-text="controllerName" ></option>
+                    </template>
+                </select>
+            </div>
+
+            <!-- HTTP Method -->
+            <div>
+                <label for="method" class="block mb-1 font-semibold">HTTP Method</label>
+                <select id="method" x-model="httpMethod" @change="resourcePattern = ''" class="w-full border border-gray-300 rounded px-3 py-2" :disabled="!selectedController">
+                    <option value="" disabled>Select Method</option>
+                    <template x-for="method in availableMethods()" :key="method">
+                        <option :value="method" x-text="method"></option>
+                    </template>
+                </select>
+            </div>
+
+            <!-- Permissions -->
+            <div>
+                <label class="block mb-1 font-semibold">Permissions</label>
+                <div class="grid grid-cols-2 gap-3 max-h-48 overflow-y-auto border border-gray-300 rounded p-3">
+                    <label th:each="permission : ${permissions}" class="inline-flex items-center space-x-2">
+                        <input type="checkbox" th:value="${permission.id}" th:field="*{permissions}" class="h-4 w-4"/>
+                        <span th:text="${permission.name}"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Resource Pattern -->
+            <div>
+                <label for="resourcePatternDisplay" class="block mb-1 font-semibold">Resource Pattern</label>
+                <select id="resourcePatternDisplay" x-model="resourcePattern" class="w-full border border-gray-300 rounded px-3 py-2" :disabled="!httpMethod">
+                    <option value="" disabled>Select Endpoint</option>
+                    <template x-for="pattern in availablePatterns()" :key="pattern">
+                        <option :value="pattern" x-text="pattern"></option>
+                    </template>
+                </select>
+            </div>
+
+        </div>
+
+        <!-- Active Checkbox -->
+        <div class="flex items-center space-x-2">
+            <input id="active" type="checkbox" th:field="*{active}" class="h-5 w-5 text-blue-600"/>
+            <label for="active" class="font-semibold">Active</label>
+        </div>
+
+        <!-- Roles -->
+        <div>
+            <label class="block mb-1 font-semibold">Roles</label>
+            <div class="grid grid-cols-2 gap-3 max-h-48 overflow-y-auto border border-gray-300 rounded p-3">
+                <label th:each="role : ${roles}" class="inline-flex items-center space-x-2">
+                    <input type="checkbox" th:value="${role.id}" th:field="*{roles}" class="h-4 w-4"/>
+                    <span th:text="${role.name}"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div>
+            <label for="description" class="block mb-1 font-semibold">Description</label>
+            <input id="description" type="text" th:field="*{description}" placeholder="Enter a short Description"
+                   class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex justify-end space-x-3">
+            <a th:href="@{/admin/policies}" class="px-5 py-2 rounded bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold">Cancel</a>
+            <button type="submit"
+                    class="px-5 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white font-semibold">Save</button>
+        </div>
+
+    </form>
+</div>
+
+<script th:inline="javascript">
+    function policyForm() {
+        return {
+            // These values come from your Thymeleaf model - convert JSON string safely
+            endpointsByController: /*[[${endpointsByMethod}]]*/ {},
+
+            selectedController: /*[[${policy.resourcePattern != null}]]*/ '' || '',
+            httpMethod: /*[[${policy.httpMethod}]]*/ '' || '',
+            resourcePattern: /*[[${policy.resourcePattern}]]*/ '' || '',
+
+            init() {
+                // You can initialize here if needed
+            },
+
+            availableMethods() {
+                console.log("Available methods: ", this.httpMethod)
+                if (!this.selectedController) return [];
+                return Object.keys(this.endpointsByController[this.selectedController] || {});
+            },
+
+            availablePatterns() {
+                console.log("Available resource Patterns: ", this.resourcePattern)
+                if (!this.selectedController || !this.httpMethod) return [];
+                return this.endpointsByController[this.selectedController][this.httpMethod] || [];
+            }
+        }
+    }
+</script>
+</body>
+</html>

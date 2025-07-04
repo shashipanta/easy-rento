@@ -1,11 +1,13 @@
 package com.tms.easyrento.model.auth;
 
+import com.tms.easyrento.admin.Policy;
 import com.tms.easyrento.model.AbstractAuditor;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author shashi
@@ -33,14 +35,14 @@ public class Role extends AbstractAuditor {
     @Column(name = "description")
     private String description;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(
-            name = "roles_permissions",
+            name = "role_policy",
             joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "permission_id"),
-            foreignKey = @ForeignKey(name = "fk_roles_permissions_id"),
-            inverseForeignKey = @ForeignKey(name = "fk_permissions_roles_id")
+            inverseJoinColumns = @JoinColumn(name = "policy_id"),
+            foreignKey = @ForeignKey(name = "fk_roles_policies_id"),
+            inverseForeignKey = @ForeignKey(name = "fk_policies_roles_id")
     )
-    private List<Permission> permissions;
+    private Set<Policy> policies = new HashSet<>();
 
 }

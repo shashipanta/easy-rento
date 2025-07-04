@@ -1,20 +1,20 @@
-CREATE TABLE roles_permissions
-(
-    permission_id BIGINT NOT NULL,
-    role_id       BIGINT NOT NULL
-);
-
-ALTER TABLE roles_permissions
-    ADD CONSTRAINT fk_permissions_roles_id FOREIGN KEY (role_id) REFERENCES roles (id);
-
-ALTER TABLE roles_permissions
-    ADD CONSTRAINT fk_roles_permissions_id FOREIGN KEY (permission_id) REFERENCES permissions (id);
-
-insert into roles_permissions (role_id, permission_id)
-values (1, 1),
-       (1, 2),
-       (1, 3),
-       (1, 4),
-       (2, 1),
-       (2, 2),
-       (2, 3);
+-- CREATE TABLE roles_permissions
+-- (
+--     permission_id BIGINT NOT NULL,
+--     role_id       BIGINT NOT NULL
+-- );
+--
+-- ALTER TABLE roles_permissions
+--     ADD CONSTRAINT fk_permissions_roles_id FOREIGN KEY (role_id) REFERENCES roles (id);
+--
+-- ALTER TABLE roles_permissions
+--     ADD CONSTRAINT fk_roles_permissions_id FOREIGN KEY (permission_id) REFERENCES permissions (id);
+--
+-- insert into roles_permissions (role_id, permission_id)
+-- values (1, 1),
+--        (1, 2),
+--        (1, 3),
+--        (1, 4),
+--        (2, 1),
+--        (2, 2),
+--        (2, 3);

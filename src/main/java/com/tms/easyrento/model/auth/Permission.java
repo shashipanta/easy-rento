@@ -21,7 +21,7 @@ import java.util.Set;
                 @UniqueConstraint(name = "uk_permissions_name", columnNames = "permission_name")
         }
 )
-public class Permission extends AbstractAuditor {
+public class Permission  {
 
         @Id
         @SequenceGenerator(name = "permissions_seq_gen", sequenceName = "permissions_seq", allocationSize = 1)
@@ -34,6 +34,4 @@ public class Permission extends AbstractAuditor {
         @Column(name = "alias", nullable = false, length = 10)
         private String alias;
 
-        @ManyToMany(fetch = FetchType.LAZY, mappedBy = "permissions")
-        private Set<Role> role;
 }

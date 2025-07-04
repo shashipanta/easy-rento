@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Policy Form</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-900 font-sans">
+
+<div class="max-w-3xl mx-auto p-6">
+  <h1 class="text-2xl font-bold mb-6" th:text="${policy.id == null} ? 'Create Policy' : 'Edit Policy'"></h1>
+
+  <form th:action="@{/admin/policies/save}" method="post" th:object="${policy}" class="bg-white p-6 rounded shadow">
+    <input type="hidden" th:field="*{id}"/>
+
+    <div class="mb-4">
+      <label class="block font-medium mb-1">Name</label>
+      <input th:field="*{name}" class="w-full border border-gray-300 rounded px-3 py-2"/>
+    </div>
+
+    <div class="mb-4">
+      <label class="block font-medium mb-1">HTTP Method</label>
+      <select th:field="*{httpMethod}" class="w-full border border-gray-300 rounded px-3 py-2">
+        <option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option>
+      </select>
+    </div>
+
+    <div class="mb-4">
+      <label class="block font-medium mb-1">Resource Pattern</label>
+      <input th:field="*{resourcePattern}" placeholder="/api/users/{id}" class="w-full border border-gray-300 rounded px-3 py-2"/>
+    </div>
+
+    <div class="mb-4">
+      <label class="block font-medium mb-1">Condition (SpEL)</label>
+      <input th:field="*{conditionSpel}" placeholder="#id == #currentUserId" class="w-full border border-gray-300 rounded px-3 py-2"/>
+    </div>
+
+    <div class="mb-4 flex gap-4">
+      <label class="inline-flex items-center">
+        <input type="checkbox" th:field="*{allow}" class="mr-2"/> Allow
+      </label>
+      <label class="inline-flex items-center">
+        <input type="checkbox" th:field="*{active}" class="mr-2"/> Active
+      </label>
+    </div>
+
+    <div class="mb-6">
+      <label class="block font-medium mb-2">Roles</label>
+      <div class="grid grid-cols-2 gap-2">
+        <label th:each="role : ${roles}" class="inline-flex items-center">
+          <input type="checkbox" th:value="${role.id}" th:field="*{roles}" class="mr-2"/>
+          <span th:text="${role.name}"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="flex justify-end space-x-3">
+      <a th:href="@{/admin/policies}" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Cancel</a>
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Save</button>
+    </div>
+  </form>
+</div>
+
+</body>
+</html>

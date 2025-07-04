@@ -19,8 +19,19 @@ spring:
     open-in-view: true
     hibernate:
       ddl-auto: update
+
   flyway:
     baseline-on-migrate: true
+  # thymeleaf for development purpose
+  thymeleaf:
+    cache: false
+#    prefix: classpath:/templates/
+    prefix: file:src/main/resources/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
 
 # logging
 logging:
