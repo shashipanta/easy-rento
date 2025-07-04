@@ -3,55 +3,63 @@
 <head th:replace="~{fragments/head :: head('Policy Form')}" ></head>
 <body class="bg-gray-100 min-h-screen">
 
-<div th:replace="~{fragments/nav :: navbar}"></div>
+<!--<div th:replace="~{fragments/nav :: navbar}"></div>-->
 
-<div class="max-w-7xl mx-auto p-6">
-    <h1 class="text-2xl font-semibold mb-6">Policy Management</h1>
+<div class="flex">
 
-    <div class="mb-4 text-right">
-        <a th:href="@{/admin/policies/new}"
-           class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">+ New Policy</a>
-    </div>
+    <!-- Sidebar -->
+    <div th:replace="fragments/sidebar" ></div>
 
-    <table class="w-full table-auto border-collapse bg-white shadow-md rounded">
-        <thead class="bg-gray-100">
-        <tr>
-            <th class="px-4 py-2 text-left">Name</th>
-            <th class="px-4 py-2">Method</th>
-            <th class="px-4 py-2">Path</th>
-            <th class="px-4 py-2">Roles</th>
-            <th class="px-4 py-2">Active</th>
-            <th class="px-4 py-2">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="policy : ${policies}" class="border-t hover:bg-gray-50">
-            <td class="px-4 py-2" th:text="${policy.name}"></td>
-            <td class="px-4 py-2 text-center" th:text="${policy.httpMethod}"></td>
-            <td class="px-4 py-2" th:text="${policy.resourcePattern}"></td>
-            <!--            <td class="px-4 py-2" th:text="${#strings.join(policy.roles.*.name, ', ')}"></td>-->
-            <td>
+    <div class="mx-auto p-6 ">
+        <h1 class="text-2xl font-semibold mb-6">Policy Management</h1>
+
+        <div class="mb-4 text-right">
+            <a th:href="@{/admin/policies/new}"
+               class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">+ New Policy</a>
+        </div>
+
+        <table class="w-full table-auto border-collapse bg-white shadow-md rounded">
+            <thead class="bg-gray-100">
+            <tr>
+                <th class="px-4 py-2 text-left">Name</th>
+                <th class="px-4 py-2">Method</th>
+                <th class="px-4 py-2">Path</th>
+                <th class="px-4 py-2">Roles</th>
+                <th class="px-4 py-2">Active</th>
+                <th class="px-4 py-2">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="policy : ${policies}" class="border-t hover:bg-gray-50">
+                <td class="px-4 py-2" th:text="${policy.name}"></td>
+                <td class="px-4 py-2 text-center" th:text="${policy.httpMethod}"></td>
+                <td class="px-4 py-2" th:text="${policy.resourcePattern}"></td>
+                <!--            <td class="px-4 py-2" th:text="${#strings.join(policy.roles.*.name, ', ')}"></td>-->
+                <td>
             <span th:if="${policy.roles != null}">
                 <span th:each="role,iterStat : ${policy.roles}">
                     <span th:text="${role.name}"></span><span th:if="${!iterStat.last}">, </span>
                 </span>
                 </span>
-            </td>
+                </td>
 
-            <td class="px-4 py-2 text-center">
-                <span th:if="${policy.active}" class="text-green-600 font-semibold">✔</span>
-                <span th:if="${!policy.active}" class="text-red-500 font-semibold">✘</span>
-            </td>
-            <td class="px-4 py-2 text-center space-x-2">
-                <a th:href="@{'/admin/policies/edit/' + ${policy.id}}"
-                   class="text-blue-600 hover:underline">Edit</a>
-                <a th:href="@{'/admin/policies/delete/' + ${policy.id}}"
-                   class="text-red-600 hover:underline"
-                   onclick="return confirm('Delete this policy?')">Delete</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+                <td class="px-4 py-2 text-center">
+                    <span th:if="${policy.active}" class="text-green-600 font-semibold">✔</span>
+                    <span th:if="${!policy.active}" class="text-red-500 font-semibold">✘</span>
+                </td>
+                <td class="px-4 py-2 text-center space-x-2">
+                    <a th:href="@{'/admin/policies/edit/' + ${policy.id}}"
+                       class="text-blue-600 hover:underline">Edit</a>
+                    <a th:href="@{'/admin/policies/delete/' + ${policy.id}}"
+                       class="text-red-600 hover:underline"
+                       onclick="return confirm('Delete this policy?')">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
 </div>
 
 </body>

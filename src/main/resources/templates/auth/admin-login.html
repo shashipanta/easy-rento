@@ -10,13 +10,17 @@
 <section class="w-full max-w-md bg-gray-800 bg-opacity-90 p-10 rounded-xl shadow-2xl">
     <h2 class="text-3xl font-semibold mb-8 text-center text-white">Admin Login</h2>
 
+    <!-- CSRF  token   -->
+<!--    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
+
+
     <!-- Error message -->
     <div th:if="${param.error}"
          class="mb-6 bg-red-600 text-white px-4 py-3 rounded text-center">
         <span th:text="${param.error}">Something went wrong</span>
     </div>
 
-    <form th:action="@{/admin/login}" method="post" class="space-y-6">
+    <form th:action="@{/admin/spring-security/login}" method="post" class="space-y-6">
         <div>
             <label for="username" class="block mb-2 font-medium text-gray-300">Username</label>
             <input

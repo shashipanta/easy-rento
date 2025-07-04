@@ -2,7 +2,7 @@
 
 CREATE SEQUENCE IF NOT EXISTS permissions_seq START WITH 1 INCREMENT BY 1;
 
-CREATE TABLE permissions
+CREATE TABLE IF NOT EXISTS permissions
 (
     id               BIGINT       NOT NULL,
     created_by       BIGINT       NOT NULL,

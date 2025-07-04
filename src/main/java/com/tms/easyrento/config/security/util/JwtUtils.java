@@ -41,7 +41,6 @@ public class JwtUtils {
     }
 
     private static String SECRET_KEY;
-    private static int EXPIRATION_TIME = 864_000_000; // 10 days
 
     public String generateToken(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -49,6 +48,8 @@ public class JwtUtils {
         Long loggedUserId = userAccountService.getId(userDetails.getUsername());
 
         Date now = new Date();
+        // 10 days
+        int EXPIRATION_TIME = 864_000_000;
         Date expiryDate = new Date(now.getTime() + EXPIRATION_TIME);
 
         Map<String, Object> customClaims = Map.of("userId", loggedUserId);

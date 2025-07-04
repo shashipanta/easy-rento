@@ -2,7 +2,7 @@
 
 CREATE SEQUENCE IF NOT EXISTS roles_seq START WITH 1 INCREMENT BY 1;
 
-CREATE TABLE roles
+CREATE TABLE IF NOT EXISTS roles
 (
     id               BIGINT       NOT NULL,
     created_by       BIGINT       NOT NULL,
@@ -16,8 +16,18 @@ CREATE TABLE roles
     CONSTRAINT pk_roles PRIMARY KEY (id)
 );
 
-ALTER TABLE roles
-    ADD CONSTRAINT uk_roles_name UNIQUE (name);
+DO $$
+    BEGIN
+        IF NOT EXISTS (
+            SELECT 1
+            FROM pg_constraint
+            WHERE conname = 'uk_roles_name'
+        ) THEN
+            ALTER TABLE roles
+                ADD CONSTRAINT uk_roles_name UNIQUE (name);
+        END IF;
+    END;
+$$;
 
 -- default roles
 INSERT INTO roles (id, active, created_by, created_on, last_modified_by, last_modified_on, status, description, name)

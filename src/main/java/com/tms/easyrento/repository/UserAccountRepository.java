@@ -38,6 +38,8 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Long> 
     List<UserAccount> getAll(Long isActive);
 
     @Query(nativeQuery = true,
-    value = "SELECT * FROM user_accounts u_a where u_a.user_name = ?1 or u_a.email = ?1")
+    value = """ 
+            SELECT * FROM user_accounts u_a where u_a.user_name = ?1 or u_a.email = ?1
+            """)
     Optional<UserAccount> findBy(String username);
 }

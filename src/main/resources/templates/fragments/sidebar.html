@@ -1,0 +1,28 @@
+<div th:fragment="admin-sidebar">
+<aside class="w-64 bg-gray-800 text-white min-h-screen p-6 space-y-6">
+    <div class="text-2xl font-bold text-center">Admin Panel</div>
+
+    <!-- User Info -->
+    <div class="text-sm text-gray-300 text-center border-b border-gray-600 pb-4 mb-4">
+        Logged in as<br/>
+        <span class="font-semibold text-white" th:text="${#authentication.name}">Username</span>
+    </div>
+
+    <nav class="space-y-2">
+        <a href="/admin/dashboard" class="block px-4 py-2 rounded hover:bg-gray-700">Dashboard</a>
+
+        <!-- Only show if it has ADMIN role -->
+        <div th:if="${#authorization.expression('hasRole(''ROLE_SUPER_ADMIN'')')}">
+            <a href="/admin/users" class="block px-4 py-2 rounded hover:bg-gray-700">Manage Users</a>
+            <a href="/admin/roles" class="block px-4 py-2 rounded hover:bg-gray-700">Manage Roles</a>
+            <a href="/admin/policies" class="block px-4 py-2 rounded hover:bg-gray-700">Manage Policies</a>
+        </div>
+
+        <form th:action="@{/admin/logout}" method="post" class="mt-6">
+            <button type="submit" class="w-full text-left px-4 py-2 rounded hover:bg-red-600 bg-red-500">
+                Logout
+            </button>
+        </form>
+    </nav>
+</aside>
+</div>

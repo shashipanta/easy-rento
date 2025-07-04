@@ -21,7 +21,7 @@ import java.util.Set;
                 @UniqueConstraint(name = "uk_permissions_name", columnNames = "permission_name")
         }
 )
-public class Permission  {
+public class Permission extends AbstractAuditor {
 
         @Id
         @SequenceGenerator(name = "permissions_seq_gen", sequenceName = "permissions_seq", allocationSize = 1)

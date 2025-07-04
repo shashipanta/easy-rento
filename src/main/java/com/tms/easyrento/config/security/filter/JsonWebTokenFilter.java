@@ -13,11 +13,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author shashi
@@ -30,11 +32,26 @@ import java.util.Arrays;
 public class JsonWebTokenFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
+    private final AntPathMatcher antPathMatcher;
+
     private static final String AUTH_HEADER = "Authorization";
     private static final String AUTH_COOKIE_HEADER_NAME = "accessToken";
     private static final String BEARER = "Bearer";
+    private static final List<String> WHITELISTED_API = List.of(
+            "/admin/login",
+            "/admin/login?error", // this can be replaced with /admin/login/** as
+            "/admin/css/**",
+            "/admin/js/**"
+    );
 
     private static final Logger logger = LoggerFactory.getLogger(JsonWebTokenFilter.class);
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String currentPath = request.getServletPath();
+        return WHITELISTED_API.stream()
+                .anyMatch(allowed -> antPathMatcher.match(allowed, currentPath));
+    }
 
     @Override
     protected void doFilterInternal(

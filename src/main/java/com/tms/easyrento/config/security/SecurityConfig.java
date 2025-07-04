@@ -1,5 +1,6 @@
 package com.tms.easyrento.config.security;
 
+import com.tms.easyrento.admin.CustomLoginFailureHandler;
 import com.tms.easyrento.config.security.filter.JsonWebTokenFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,11 +15,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.util.AntPathMatcher;
 
 /**
  * @author shashi
@@ -31,15 +37,18 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
     private final JsonWebTokenFilter jsonWebTokenFilter;
+    private final CustomLoginFailureHandler customLoginFailureHandler;
 
     private static final String ADMIN_ENDPOINT = "/admin/**";
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
     SecurityConfig(@Lazy CustomUserDetailsService customUserDetailsService,
-                   @Lazy JsonWebTokenFilter jsonWebTokenFilter) {
+                   @Lazy JsonWebTokenFilter jsonWebTokenFilter,
+                   CustomLoginFailureHandler customLoginFailureHandler) {
         this.customUserDetailsService = customUserDetailsService;
         this.jsonWebTokenFilter = jsonWebTokenFilter;
+        this.customLoginFailureHandler = customLoginFailureHandler;
     }
 
     @Bean
@@ -62,11 +71,13 @@ public class SecurityConfig {
                 .securityMatcher(ADMIN_ENDPOINT)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/login", "admin/css/**", "/admin/js/**").permitAll()
-                        .anyRequest().hasRole("ADMIN")
+                        .anyRequest().authenticated() // ← allow any authenticated user (even without role)
                 )
                 .formLogin(form -> form
                         .loginPage("/admin/login")
+                        .loginProcessingUrl("/admin/spring-security/login")
                         .defaultSuccessUrl("/admin/dashboard", true)
+                        .failureHandler(customLoginFailureHandler)
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -76,9 +87,10 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
-                .csrf(csrf -> csrf
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                );
+                .csrf(AbstractHttpConfigurer::disable);
+//                .csrf(csrf -> csrf
+//                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//                );
 
         return http.build();
 
@@ -116,5 +128,10 @@ public class SecurityConfig {
         daoAuthenticationProvider.setUserDetailsService(customUserDetailsService);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         return new ProviderManager(daoAuthenticationProvider);
+    }
+
+    @Bean
+    public AntPathMatcher antPathMatcher() {
+        return new AntPathMatcher();
     }
 }

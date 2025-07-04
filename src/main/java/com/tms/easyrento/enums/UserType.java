@@ -11,7 +11,8 @@ import lombok.Getter;
 public enum UserType {
 
     OWNER("O"),
-    TENANT("T");
+    TENANT("T"),
+    ADMIN("A");
 
     private String userTypeName;
 

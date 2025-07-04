@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
  * @author shashi
@@ -41,4 +44,7 @@ public class UserAccount extends AbstractAuditor {
     @Enumerated(EnumType.STRING)
     @Column(name = "user_type")
     private UserType userType = UserType.TENANT;
+
+    @ManyToMany(mappedBy = "userAccounts")
+    private Set<Role> roles = new HashSet<>();
 }

@@ -37,6 +37,16 @@ public class Role extends AbstractAuditor {
 
     @ManyToMany
     @JoinTable(
+            name = "user_role",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "user-account_id"),
+            foreignKey = @ForeignKey(name = "fk_roles_user-accounts_id"),
+            inverseForeignKey = @ForeignKey(name = "fk_user_accounts_roles_id")
+    )
+    private Set<UserAccount> userAccounts = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
             name = "role_policy",
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "policy_id"),
