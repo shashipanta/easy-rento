@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="eng">
-<head th:replace="~{fragments/head :: head('Policy Form')}" ></head>
-<body class="bg-gray-100 min-h-screen">
+<head th:replace="~{fragments/head :: head('Policy Form')}"></head>
+<body th:replace="fragments/layout :: layout(~{::div}, 'Policy Management')"
+      class="bg-gray-100 min-h-screen">
 
 <!--<div th:replace="~{fragments/nav :: navbar}"></div>-->
 
 <div class="flex">
-
-    <!-- Sidebar -->
-    <div th:replace="fragments/sidebar" ></div>
 
     <div class="mx-auto p-6 ">
         <h1 class="text-2xl font-semibold mb-6">Policy Management</h1>

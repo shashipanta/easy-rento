@@ -1,21 +1,31 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:x-bind="http://www.w3.org/1999/xhtml">
-<head th:replace="fragments/head :: head('Default Title')">
-    <meta charset="UTF-8">
-    <title>Default Title</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-</head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:x-bind="http://www.w3.org/1999/xhtml"
+      th:fragment="layout(content, pageTitle)">
 
-<body class="bg-gray-50 text-gray-900 font-sans">
+<head th:replace="fragments/head :: head(${pageTitle})">
+    <title th:text="${pageTitle}">Default Title</title>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans min-h-screen flex flex-col">
 
 <!-- Navbar -->
-<div th:replace="fragments/nav :: navbar"></div>
+<header th:replace="fragments/nav :: navbar" class="h-16 shrink-0"></header>
 
-<!-- Main Content -->
-<div class="max-w-7xl mx-auto p-6" th:fragment="content">
-    <!-- Page-specific content will be inserted here -->
+<!-- Main Content Area -->
+<div class="flex flex-1 overflow-hidden">
+
+    <!-- Sidebar -->
+
+    <div th:replace="fragments/sidebar :: admin-sidebar"></div>
+
+    <!-- Main Page Content -->
+    <main class="flex-1 overflow-y-auto p-6">
+        <div th:replace="${content}">Default page content</div>
+    </main>
 </div>
+
+<!-- Footer -->
+<footer th:replace="fragments/footer :: footer" class="h-16 shrink-0"></footer>
 
 <!-- Toast Notification Component -->
 <div
@@ -47,11 +57,17 @@
     }
 </script>
 
-<!-- Spring / Thymeleaf Flash Message Support -->
+<!-- Flash Messages -->
 <script th:inline="javascript">
     /*<![CDATA[*/
-    [[${successMessage} != null ? 'showToast("success", "' + ${successMessage} + '");' : '']]
-    [[${errorMessage} != null ? 'showToast("error", "' + ${errorMessage} + '");' : '']]
+    [[${successMessage} != null ? 'showToast("success", "' + ${successMessage} + '");'
+    :
+    ''
+    ]]
+    [[${errorMessage} != null ? 'showToast("error", "' + ${errorMessage} + '");'
+    :
+    ''
+    ]]
     /*]]>*/
 </script>
 

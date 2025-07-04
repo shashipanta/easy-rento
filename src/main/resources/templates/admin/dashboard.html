@@ -1,19 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/head :: head('Admin Dashboard')" />
-<body class="bg-gray-100 min-h-screen font-sans">
-
-<div class="flex">
-    <!-- Sidebar -->
-    <div th:replace="fragments/sidebar" ></div>
-
-    <!-- Main Content -->
-    <main class="flex-1 p-8 bg-white shadow-md">
-        <h1 class="text-2xl font-bold mb-6">Dashboard</h1>
-
-        <p>Welcome, <span th:text="${#authentication.name}">admin</span>!</p>
-    </main>
-</div>
-
+<body th:replace="fragments/layout :: layout(~{::section}, 'Dashboard')" >
+<section>
+    <h1 class="text-2xl font-semibold text-gray-900 mb-4">Welcome to Dashboard</h1>
+    <!-- More content here -->
+</section>
 </body>
 </html>
