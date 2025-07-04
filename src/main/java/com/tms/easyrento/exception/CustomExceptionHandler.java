@@ -90,14 +90,19 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         String[] split = constraintName.split("_");
         String columnName = split[split.length - 1];
         String stringConstCode = columnName.replace("-", ".");
-        String errorMessage;
+        String errorMessage = "";
 
         String errPrefix = split[0];
 
         if (PREFIX_UNIQUE.equals(errPrefix)) {
-            errorMessage = messageSource.get("exists", messageSource.get(stringConstCode));
+            try {
+                errorMessage = messageSource.get("exists", messageSource.get(stringConstCode));
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+            }
             errors.add(errorMessage);
             cve.printStackTrace();
+
         }
     }
 
