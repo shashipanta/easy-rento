@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,7 +42,8 @@ public class JsonWebTokenFilter extends OncePerRequestFilter {
             "/admin/login",
             "/admin/login?error", // this can be replaced with /admin/login/** as
             "/admin/css/**",
-            "/admin/js/**"
+            "/admin/js/**",
+            "/admin/**"           // any URI prefixing with /admin/login, /admin/dashboard, /admin/policies is MVC
     );
 
     private static final Logger logger = LoggerFactory.getLogger(JsonWebTokenFilter.class);
@@ -74,15 +76,16 @@ public class JsonWebTokenFilter extends OncePerRequestFilter {
                     securityContext.setAuthentication(authentication);
                 }
             }
+            filterChain.doFilter(request, response);
         } catch (Exception ex) {
             logger.error("Error processing JWT: {}", ex.getMessage());
         }
 
-        filterChain.doFilter(request, response);
     }
 
     /**
      * Extract token from either header or from cookie
+     *
      * @param request
      * @return
      */
@@ -90,7 +93,7 @@ public class JsonWebTokenFilter extends OncePerRequestFilter {
         // Extract and return the token from the Authorization header
         // ...
         String bearerToken = request.getHeader(AUTH_HEADER);
-        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER)) {
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER)) {
             return bearerToken.substring(7);
         }
         if (request.getCookies() != null) {
@@ -104,7 +107,5 @@ public class JsonWebTokenFilter extends OncePerRequestFilter {
         }
         return null;
     }
-
-
 
 }

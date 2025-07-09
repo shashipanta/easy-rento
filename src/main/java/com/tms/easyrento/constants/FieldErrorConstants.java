@@ -1,7 +1,6 @@
 package com.tms.easyrento.constants;
 
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * @author shashi
@@ -13,8 +12,8 @@ import lombok.Setter;
 public class FieldErrorConstants {
 
     public static final String NOT_BLANK = "not.blank";
-
     public static final String NOT_NULL = "not.null";
+    public static final String NOT_EMPTY = "not.empty";
 
     public static final String NET_WORTH_NOT_SUFFICIENT = "net.worth.not.sufficient";
 

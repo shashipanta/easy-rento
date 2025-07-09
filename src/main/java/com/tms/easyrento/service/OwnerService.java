@@ -19,13 +19,13 @@ public interface OwnerService extends CurdService<OwnerRequest, Owner, OwnerResp
 
     Long update(OwnerRequest request, Long aLong);
 
-    List<OwnerResponse> read(String isActive) ;
+    List<OwnerResponse> read(String isActive);
 
-    void delete(Long aLong) ;
+    void delete(Long aLong);
 
-    boolean hardDelete(Long aLong) ;
+    boolean hardDelete(Long aLong);
 
-    Owner model(Long aLong) ;
+    Owner model(Long aLong);
 
     Boolean terminateContract(Long contractId);
 

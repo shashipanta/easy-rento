@@ -1,8 +1,10 @@
 package com.tms.easyrento.admin;
 
 
+import com.tms.easyrento.admin.dto.PolicyDto;
 import com.tms.easyrento.repository.PermissionRepo;
 import com.tms.easyrento.repository.RoleRepo;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -57,8 +59,8 @@ public class PolicyController {
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute Policy policy) {
-        policyRepo.save(policy);
+    public String save(@ModelAttribute @Valid PolicyDto policyDto) {
+        policyRepo.save(policyDto.toModel(policyDto));
         return "redirect:/admin/policies";
     }
 

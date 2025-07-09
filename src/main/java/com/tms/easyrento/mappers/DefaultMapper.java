@@ -15,7 +15,6 @@ public interface DefaultMapper<REQ, MOD, RES, ID> {
 
     REQ toDto(MOD model);
 
-
     @Mapping(source = "active", target = "isActive")
     @Mapping(source = "createdOn", target = "createdOn", dateFormat = "dd-MM-yyyy HH:mm:ss")
     RES entityToResponse(MOD model);

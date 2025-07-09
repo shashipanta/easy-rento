@@ -45,9 +45,6 @@ public class Property extends AbstractAuditor {
     @Column(name = "title")
     private String title;
 
-//    @Column(name = "image_url", columnDefinition = "text")
-//    private String imageUrl;
-
     @Column(name = "property_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private PropertyType propertyType = PropertyType.ROOM;
