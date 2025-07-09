@@ -2,6 +2,7 @@ package com.tms.easyrento.admin;
 
 import com.tms.easyrento.enums.Status;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -12,6 +13,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class RoleDto {
 
     private Long id;
@@ -23,4 +25,9 @@ public class RoleDto {
     private boolean active;
 
     private Status status;
+
+    public RoleDto(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

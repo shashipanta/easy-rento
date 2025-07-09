@@ -4,6 +4,7 @@ import com.tms.easyrento.admin.Policy;
 import com.tms.easyrento.model.AbstractAuditor;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
@@ -22,6 +23,7 @@ import java.util.Set;
                 @UniqueConstraint(name = "uk_roles_name", columnNames = "name")
         }
 )
+@NoArgsConstructor
 public class Role extends AbstractAuditor {
 
     @Id
@@ -39,7 +41,7 @@ public class Role extends AbstractAuditor {
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "user-account_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_account_id"),
             foreignKey = @ForeignKey(name = "fk_roles_user-accounts_id"),
             inverseForeignKey = @ForeignKey(name = "fk_user_accounts_roles_id")
     )
@@ -54,5 +56,10 @@ public class Role extends AbstractAuditor {
             inverseForeignKey = @ForeignKey(name = "fk_policies_roles_id")
     )
     private Set<Policy> policies = new HashSet<>();
+
+    // for mapping dto to Role object
+    public Role(Long id) {
+        this.id = id;
+    }
 
 }

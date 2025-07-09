@@ -3,11 +3,8 @@ package com.tms.easyrento.admin;
 import com.tms.easyrento.model.auth.Permission;
 import com.tms.easyrento.model.auth.Role;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -19,13 +16,18 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "policies",
-uniqueConstraints = {@UniqueConstraint(name = "uk_policies_name", columnNames = {"name", "http_method"})})
+@Table(
+        name = "policies",
+        uniqueConstraints = {@UniqueConstraint(name = "uk_policies_name", columnNames = {"name", "http_method"})}
+)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Policy {
 
     @Id
     @SequenceGenerator(name = "policies_seq_gen", sequenceName = "policies_seq", allocationSize = 1, initialValue = 1)
-    @GeneratedValue( generator = "policies_seq_gen", strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = "policies_seq_gen", strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(name = "name", nullable = false)

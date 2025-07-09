@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,8 +41,7 @@ public class JsonWebTokenFilter extends OncePerRequestFilter {
             "/admin/login",
             "/admin/login?error", // this can be replaced with /admin/login/** as
             "/admin/css/**",
-            "/admin/js/**",
-            "/admin/**"           // any URI prefixing with /admin/login, /admin/dashboard, /admin/policies is MVC
+            "/admin/js/**"
     );
 
     private static final Logger logger = LoggerFactory.getLogger(JsonWebTokenFilter.class);
@@ -104,5 +102,7 @@ public class JsonWebTokenFilter extends OncePerRequestFilter {
         }
         return null;
     }
+
+
 
 }
