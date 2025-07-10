@@ -4,6 +4,7 @@ import com.tms.easyrento.enums.UserType;
 import com.tms.easyrento.model.AbstractAuditor;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
@@ -25,6 +26,7 @@ import java.util.Set;
                 @UniqueConstraint(name = "uk_user-accounts_user-name", columnNames = "user_name")
         }
 )
+@NoArgsConstructor
 public class UserAccount extends AbstractAuditor {
 
     @Id
@@ -47,4 +49,8 @@ public class UserAccount extends AbstractAuditor {
 
     @ManyToMany(mappedBy = "userAccounts")
     private Set<Role> roles = new HashSet<>();
+
+    public UserAccount(Long id) {
+        this.id = id;
+    }
 }

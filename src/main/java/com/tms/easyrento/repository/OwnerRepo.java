@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author shashi
@@ -32,4 +33,6 @@ public interface OwnerRepo extends JpaRepository<Owner, Long> {
 
     @Query(value = "select o.ID from owners o where o.contract_id = ?1", nativeQuery = true)
     List<Owner> getAssociatedOwnersByContractId(Long contractId);
+
+    Optional<Owner> findByUserAccount_Id(Long userAccountId);
 }

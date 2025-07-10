@@ -9,7 +9,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author shashi
@@ -24,11 +26,6 @@ import java.util.List;
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_properties_property-code", columnNames = "property_code"),
                 @UniqueConstraint(name = "uk_properties_address-id", columnNames = {"address_id"})
-        }
-)
-@NamedEntityGraph(name = "property-owner-entity-graph",
-        attributeNodes = {
-                @NamedAttributeNode("owner")
         }
 )
 public class Property extends AbstractAuditor {
@@ -79,9 +76,15 @@ public class Property extends AbstractAuditor {
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id", nullable = false, foreignKey = @ForeignKey(name = "fk_properties_owners_id"))
-    private Owner owner;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinTable(
+            name = "property_owner",
+            joinColumns = @JoinColumn(name = "property_id"),
+            inverseJoinColumns = @JoinColumn(name = "owner_id"),
+            foreignKey = @ForeignKey(name = "fk_properties_owner-id"),
+            inverseForeignKey = @ForeignKey(name = "fk_owners_property-id")
+    )
+    private Set<Owner> owners = new HashSet<>();
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id", foreignKey = @ForeignKey(name = "fk_properties_addresses_id"))

@@ -72,6 +72,7 @@
         where p.owner_id = #{ownerId} and p.id = #{propertyId}
 
     </select>
+
     <select id="findActiveList" resultMap="propertyList">
         SELECT
         p.id as propertyId,
@@ -97,26 +98,30 @@
         ELSE p.active = p.active
         END
     </select>
+
+    <!-- @param: ownerId is loggedInUserId -->
     <select id="findPropertiesByOwnerId" resultMap="propertyList">
-        SELECT
-        p.id as propertyId,
-        p.property_code as propertyCode,
-        p.title as propertyTitle,
-        p.property_type as propertyType,
-        p.allocated_price as allocatedPrice,
-        p.price_per_unit as pricePerUnit,
+     SELECT
+        p.id                        as propertyId,
+        p.property_code             as propertyCode,
+        p.title                     as propertyTitle,
+        p.property_type             as propertyType,
+        p.allocated_price           as allocatedPrice,
+        p.price_per_unit            as pricePerUnit,
         p.is_system_evaluated_price as isSystemEvaluatedPrice,
-        p.dynamic_price as dynamicPrice,
-        p.total_rooms as totalRooms,
-        p.occupied as occupied,
-        p.created_on as createdOn,
+        p.dynamic_price             as dynamicPrice,
+        p.total_rooms               as totalRooms,
+        p.occupied                  as occupied,
+        p.created_on                as createdOn,
+        p_i.id                      as propertyImage_id,
+        p_i.file_name               as propertyImage_fileName
 
-        p_i.id as propertyImage_id,
-        p_i.file_name as propertyImage_fileName
-
-        FROM properties p
-        inner join property_images p_i on p.id = p_i.property_id
-        where p.owner_id = #{ownerId} and p.active = true
+    FROM properties p
+             inner join property_images p_i on p.id = p_i.property_id
+             inner join property_owner p_o on p.id = p_o.property_id
+             inner join owners o on p_o.owner_id = o.id
+    where o.user_id = #{ownerId}
+      and p.active = true
     </select>
 
     <select id="getSinglePropertyForAdmin" resultMap="singlePropertyInfo">

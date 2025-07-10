@@ -6,9 +6,11 @@ import com.tms.easyrento.dto.response.OwnerResponse;
 import com.tms.easyrento.dto.response.RentalOfferResponse;
 import com.tms.easyrento.dto.response.TenantResponse;
 import com.tms.easyrento.mappers.OwnerMapper;
+import com.tms.easyrento.model.auth.UserAccount;
 import com.tms.easyrento.model.owner.Owner;
 import com.tms.easyrento.repository.ContractRepo;
 import com.tms.easyrento.repository.OwnerRepo;
+import com.tms.easyrento.repository.UserAccountRepository;
 import com.tms.easyrento.service.ContractService;
 import com.tms.easyrento.service.OwnerService;
 import com.tms.easyrento.service.RentalOfferService;
@@ -16,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author shashi
@@ -28,10 +31,12 @@ public class OwnerServiceImpl implements OwnerService {
 
     private final ContractService contractService;
     private final RentalOfferService rentalOfferService;
+
+    private final UserAccountRepository userAccountRepo;
+    private final ContractRepo contractRepo;
     private final OwnerRepo ownerRepo;
 
     private final OwnerMapper ownerMapper;
-    private final ContractRepo contractRepo;
 
     private final JwtService jwtService;
 
@@ -97,4 +102,24 @@ public class OwnerServiceImpl implements OwnerService {
         Long ownerId = jwtService.getLoggedUserId();
         return Math.toIntExact(rentalOfferService.totalOffersBy(ownerId));
     }
+
+    /**
+     * Fetch the owner if it's already present else return the default owner with user_account attached
+     *
+     * @param id : Id of {@link Owner} that is used to fetch the owner
+     * @return
+     */
+    @Override
+    public Owner findByUserAccountIdOrGet(Long id) {
+        Optional<Owner> ownerOpt = ownerRepo.findByUserAccount_Id(id);
+        if (ownerOpt.isPresent()) {
+            return ownerOpt.get();
+        }
+
+        UserAccount userAccount = userAccountRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User Id not found"));
+
+        return new Owner(userAccount.getId(),  userAccount.getUsername(), "user_name_np");
+    }
+
 }

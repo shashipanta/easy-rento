@@ -10,7 +10,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author shashi
@@ -45,7 +47,7 @@ public class PropertyRequest {
     private Short totalLivingRooms = 1;
 
     @NotNull(message = FieldErrorConstants.NOT_NULL)
-    private Long ownerId;
+    private Set<Long> ownerIds = new HashSet<>();
 
     // address field
     @NotNull(message = FieldErrorConstants.NOT_NULL)

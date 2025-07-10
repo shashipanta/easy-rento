@@ -2,7 +2,9 @@ package com.tms.easyrento.dto.response;
 
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author shashi
@@ -41,7 +43,7 @@ public class PropertyResponse {
 
     private String createdOn;
 
-    private OwnerResponse ownerResponse;
+    private Set<OwnerResponse> ownerResponse =  new HashSet<>();
 
     private AddressResponse addressResponse;
 
