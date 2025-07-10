@@ -66,20 +66,17 @@ public class JsonWebTokenFilter extends OncePerRequestFilter {
             logger.info("Preflight request: METHOD NAME : {}, REQUEST URI : {}", request.getMethod(), request.getRequestURI());
             filterChain.doFilter(request, response);
         }
-        try {
-            String token = extractToken(request);
-            logger.info("Token received : {}", token);
-            if (token != null && jwtUtils.validateToken(token)) {
-                Authentication authentication = jwtUtils.getAuthentication(token);
-                if (authentication != null) {
-                    SecurityContext securityContext = SecurityContextHolder.getContext();
-                    securityContext.setAuthentication(authentication);
-                }
+        String token = extractToken(request);
+        logger.info("Token received : {}", token);
+        if (StringUtils.hasText(token)) {
+            Authentication authentication = jwtUtils.getAuthentication(token);
+            if (authentication != null) {
+                SecurityContext securityContext = SecurityContextHolder.getContext();
+                securityContext.setAuthentication(authentication);
             }
-            filterChain.doFilter(request, response);
-        } catch (Exception ex) {
-            logger.error("Error processing JWT: {}", ex.getMessage());
         }
+        filterChain.doFilter(request, response);
+
 
     }
 

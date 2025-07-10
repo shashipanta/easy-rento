@@ -93,22 +93,18 @@ public class JwtUtils {
     }
 
     public <T> T customClaims(String claimName, String token) {
-        return extractClaim(token, claims -> (T) claims.get(claimName) );
+        return extractClaim(token, claims -> (T) claims.get(claimName));
     }
 
     public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(jwtProperty.getSecretKey())
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        Jwts.parserBuilder()
+                .setSigningKey(jwtProperty.getSecretKey())
+                .build()
+                .parseClaimsJws(token);
+        return true;
     }
 
-    public  Long getLoggedUserId() {
+    public Long getLoggedUserId() {
         JwtAuthenticationToken authenticationToken = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         Object userId = customClaims("userId", authenticationToken.getToken());
         return Long.valueOf(userId.toString());
