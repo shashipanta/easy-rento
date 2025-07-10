@@ -6,8 +6,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.exception.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,7 @@ import java.util.List;
  */
 @RestControllerAdvice
 @RequiredArgsConstructor
-public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
+public class CustomExceptionHandler  {
 
     private final CustomMessageSource messageSource;
 
@@ -43,30 +42,22 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String NOT_BLANK = "NotBlank";
     private static final String NOT_EMPTY = "NotEmpty";
 
-    /**
-     * Customize the handling of {@link MethodArgumentNotValidException}.
-     * <p>This method delegates to {@link #handleExceptionInternal}.
-     *
-     * @param ex      the exception to handle
-     * @param headers the headers to be written to the response
-     * @param status  the selected response status
-     * @param request the current request
-     * @return a {@code ResponseEntity} for the response to use, possibly
-     * {@code null} when the response is already committed
-     */
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-//        log(ex);
-        final List<String> errors = new ArrayList<>();
-        for (final FieldError error : ex.getBindingResult().getFieldErrors()) {
-            validation(errors, error);
+    private static final Logger logger = LoggerFactory.getLogger(CustomExceptionHandler.class);
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<GlobalExceptionResponse> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+        List<String> errors = new ArrayList<>();
+
+        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+            validation(errors, error);  // your custom error formatting method
         }
-        for (final ObjectError error : ex.getBindingResult().getGlobalErrors()) {
+
+        for (ObjectError error : ex.getBindingResult().getGlobalErrors()) {
             errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
         }
-        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-        return handleExceptionInternal(ex, genericWithMessage(httpStatus, errors.get(0), errors), headers, httpStatus, request);
-//        return new ResponseEntity<>(genericWithMessage(status, errors.get(0), errors ), httpStatus);
+
+        return new ResponseEntity<>(genericWithMessage(HttpStatus.BAD_REQUEST,
+                errors.get(0), errors), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({DataIntegrityViolationException.class})
@@ -79,7 +70,6 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         if (cause instanceof ConstraintViolationException cve) {
             extractMessageFromViolation(errors, cve);
         }
-
 
         return new ResponseEntity<>(genericWithMessage(HttpStatusCode.valueOf(400),
                 errors.get(0), errors), HttpStatus.BAD_REQUEST);
@@ -120,7 +110,6 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
      *
      * @param errors     List of validation errors
      * @param fieldError single <code>FieldError</code>
-     *
      */
     private void validation(List<String> errors, FieldError fieldError) {
         String errorCode = fieldError.getCode();
