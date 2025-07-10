@@ -2,8 +2,6 @@ package com.tms.easyrento.config.security;
 
 import com.tms.easyrento.admin.UserAccountDto;
 import com.tms.easyrento.dbMappers.UserAccountMapper;
-import com.tms.easyrento.model.auth.UserAccount;
-import com.tms.easyrento.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

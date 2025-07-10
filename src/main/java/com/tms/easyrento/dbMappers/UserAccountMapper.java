@@ -15,4 +15,6 @@ import java.util.Optional;
 public interface UserAccountMapper {
 
     Optional<UserAccountDto> findUserAccountBy(String username);
+
+    Optional<UserAccountDto> findAdminUserAccountBy(String username);
 }

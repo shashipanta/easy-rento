@@ -1,7 +1,6 @@
 package com.tms.easyrento.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tms.easyrento.config.security.service.JwtServiceImpl;
 import com.tms.easyrento.config.security.util.JwtUtils;
 import com.tms.easyrento.dto.request.LoginRequest;
 import com.tms.easyrento.dto.request.OwnerRequest;
@@ -14,12 +13,10 @@ import com.tms.easyrento.enums.UserType;
 import com.tms.easyrento.mappers.UserAccountMapper;
 import com.tms.easyrento.model.auth.UserAccount;
 import com.tms.easyrento.repository.UserAccountRepository;
-import com.tms.easyrento.service.OwnerService;
 import com.tms.easyrento.service.TenantService;
 import com.tms.easyrento.service.UserAccountService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -46,6 +43,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     private final UserAccountRepository userAccountRepo;
     private final AuthenticationManager authenticationManager;
     private final UserAccountMapper userAccountMapper;
+    private final com.tms.easyrento.dbMappers.UserAccountMapper iUserAccountMapper;
     private final PasswordEncoder passwordEncoder;
 
     private final JwtUtils jwtUtils;

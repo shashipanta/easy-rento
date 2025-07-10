@@ -18,7 +18,9 @@ import java.util.Set;
 @Setter
 public class UserAccountDto {
 
-    private String username;
+    private Long id;
+
+    private String userName;
 
     private String password;
 

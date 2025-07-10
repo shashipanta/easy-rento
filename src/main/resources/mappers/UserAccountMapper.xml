@@ -6,11 +6,12 @@
 <mapper namespace="com.tms.easyrento.dbMappers.UserAccountMapper">
 
     <resultMap id="userAccountMap" type="com.tms.easyrento.admin.UserAccountDto" autoMapping="true">
+        <id property="id" column="id" />
+
         <collection property="roles"
                     ofType="com.tms.easyrento.admin.RoleDto"
                     columnPrefix="role_"
                     autoMapping="true">
-            <id property="id" column="id" />
         </collection>
 
     </resultMap>
@@ -32,5 +33,24 @@
             left join user_role ur on ua.id = ur.user_account_id
             left join roles r on ur.role_id = r.id
         where ua.user_name = #{username} or ua.email = #{username};
+    </select>
+
+    <select id="findAdminUserAccountBy" resultMap="userAccountMap">
+        select
+            ua.email            as email,
+            ua.user_name        as userName,
+            ua.user_type        as userType,
+            ua.password         as password,
+            ua.active           as active,
+            ua.status           as status,
+            r.id                as role_id,
+            r.name              as role_name,
+            r.status            as role_status,
+            r.active            as role_active,
+            r.description       as role_description
+        from user_accounts ua
+            left join user_role ur on ua.id = ur.user_account_id
+            left join roles r on ur.role_id = r.id
+        where ua.user_name = #{username} or ua.email = #{username} and ua.user_type = 'ADMIN';
     </select>
 </mapper>
