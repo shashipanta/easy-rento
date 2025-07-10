@@ -1,5 +1,6 @@
 package com.tms.easyrento.config.security;
 
+import com.tms.easyrento.admin.AdminUserDetailsService;
 import com.tms.easyrento.admin.CustomLoginFailureHandler;
 import com.tms.easyrento.config.security.filter.JsonWebTokenFilter;
 import org.slf4j.Logger;
@@ -15,15 +16,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.util.AntPathMatcher;
 
 /**
@@ -36,6 +32,7 @@ import org.springframework.util.AntPathMatcher;
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
+    private final AdminUserDetailsService adminUserDetailsService;
     private final JsonWebTokenFilter jsonWebTokenFilter;
     private final CustomLoginFailureHandler customLoginFailureHandler;
 
@@ -44,9 +41,11 @@ public class SecurityConfig {
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
     SecurityConfig(@Lazy CustomUserDetailsService customUserDetailsService,
+                   AdminUserDetailsService adminUserDetailsService,
                    @Lazy JsonWebTokenFilter jsonWebTokenFilter,
                    CustomLoginFailureHandler customLoginFailureHandler) {
         this.customUserDetailsService = customUserDetailsService;
+        this.adminUserDetailsService = adminUserDetailsService;
         this.jsonWebTokenFilter = jsonWebTokenFilter;
         this.customLoginFailureHandler = customLoginFailureHandler;
     }
@@ -84,6 +83,7 @@ public class SecurityConfig {
                         .logoutUrl("/admin/logout")
                         .logoutSuccessUrl("/admin/login?logout")
                 )
+                .authenticationManager(adminAuthenticationManager())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
@@ -100,7 +100,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         logger.info("Setting up API security configuration (JWT + stateless).");
-        
+
         // todo: /pubic for public endpoints
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
@@ -126,6 +126,13 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(customUserDetailsService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        return new ProviderManager(daoAuthenticationProvider);
+    }
+
+    public AuthenticationManager adminAuthenticationManager() {
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(adminUserDetailsService);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         return new ProviderManager(daoAuthenticationProvider);
     }
