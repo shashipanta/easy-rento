@@ -42,4 +42,6 @@ public class SinglePropertyResponse {
 
     private List<ImageResponse> secondaryImages;
 
+    private List<PropertyOwnershipResponse> propertyOwnerships;
+
 }

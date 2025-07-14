@@ -1,18 +1,17 @@
 package com.tms.easyrento.dto.request;
 
 import com.tms.easyrento.constants.FieldErrorConstants;
-import com.tms.easyrento.enums.PropertyType;
 import com.tms.easyrento.util.annotations.ConditionalNotNull;
 import com.tms.easyrento.util.annotations.ConditionalValidator;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author shashi
@@ -46,8 +45,8 @@ public class PropertyRequest {
 
     private Short totalLivingRooms = 1;
 
-    @NotNull(message = FieldErrorConstants.NOT_NULL)
-    private Set<Long> ownerIds = new HashSet<>();
+    @NotEmpty(message = FieldErrorConstants.NOT_EMPTY)
+    private List<PropertyOwnershipRequest> propertyOwnershipRequests = new ArrayList<>();
 
     // address field
     @NotNull(message = FieldErrorConstants.NOT_NULL)

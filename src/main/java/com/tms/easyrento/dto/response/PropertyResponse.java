@@ -54,6 +54,8 @@ public class PropertyResponse {
 
     private String description;
 
+    private List<PropertyOwnershipResponse> propertyOwnerships;
+
     @Getter
     @Setter
     public static class PropertyImageResponse {

@@ -4,14 +4,15 @@ import com.tms.easyrento.enums.PropertyType;
 import com.tms.easyrento.model.AbstractAuditor;
 import com.tms.easyrento.model.Address;
 import com.tms.easyrento.model.file.PropertyImage;
-import com.tms.easyrento.model.owner.Owner;
+import com.tms.easyrento.model.propertyOwnership.PropertyOwnership;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author shashi
@@ -28,6 +29,8 @@ import java.util.Set;
                 @UniqueConstraint(name = "uk_properties_address-id", columnNames = {"address_id"})
         }
 )
+@AllArgsConstructor
+@NoArgsConstructor
 public class Property extends AbstractAuditor {
 
     @Id
@@ -76,15 +79,8 @@ public class Property extends AbstractAuditor {
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinTable(
-            name = "property_owner",
-            joinColumns = @JoinColumn(name = "property_id"),
-            inverseJoinColumns = @JoinColumn(name = "owner_id"),
-            foreignKey = @ForeignKey(name = "fk_properties_owner-id"),
-            inverseForeignKey = @ForeignKey(name = "fk_owners_property-id")
-    )
-    private Set<Owner> owners = new HashSet<>();
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PropertyOwnership> propertyOwnerships = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id", foreignKey = @ForeignKey(name = "fk_properties_addresses_id"))
@@ -92,4 +88,8 @@ public class Property extends AbstractAuditor {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PropertyImage> propertyImage;
+
+    public Property(Long propertyId) {
+        this.id = propertyId;
+    }
 }

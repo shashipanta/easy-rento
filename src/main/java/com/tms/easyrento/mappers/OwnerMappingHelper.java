@@ -1,11 +1,13 @@
 package com.tms.easyrento.mappers;
 
+import com.tms.easyrento.dto.request.PropertyOwnershipRequest;
 import com.tms.easyrento.dto.response.OwnerResponse;
 import com.tms.easyrento.model.owner.Owner;
 import com.tms.easyrento.service.OwnerService;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,8 +35,15 @@ public class OwnerMappingHelper {
     @SneakyThrows
     public Set<Owner> mapOwnerSet(Set<Long> ids) {
         return ids.stream()
-                .map(ownerService::findByUserAccountIdOrGet)
+                .map(ownerService::findByUserAccountIdOrGetDetachedOwner)
                 .collect(Collectors.toSet());
+    }
+
+    public List<Owner> mapOwnerList(List<PropertyOwnershipRequest> propertyOwnershipRequests) {
+        return propertyOwnershipRequests.stream()
+                .map(PropertyOwnershipRequest::getOwnerId)
+                .map(ownerService::findByUserAccountIdOrGetDetachedOwner)
+                .toList();
     }
 
     /**
