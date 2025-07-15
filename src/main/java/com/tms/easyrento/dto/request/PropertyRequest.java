@@ -49,6 +49,8 @@ public class PropertyRequest {
     private List<PropertyOwnershipRequest> propertyOwnershipRequests = new ArrayList<>();
 
     // address field
+    private Long addressId;
+
     @NotNull(message = FieldErrorConstants.NOT_NULL)
     private Short wardNo;
 
