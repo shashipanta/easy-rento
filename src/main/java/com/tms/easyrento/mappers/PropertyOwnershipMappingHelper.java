@@ -46,7 +46,7 @@ public class PropertyOwnershipMappingHelper {
     }
 
     public List<PropertyOwnership> mapList(List<PropertyOwnershipRequest> requests) {
-        if (requests == null) return new ArrayList<>();
+        if (requests == null || requests.isEmpty()) return null;
         return requests.stream()
                 .map(this::map)
                 .toList();
