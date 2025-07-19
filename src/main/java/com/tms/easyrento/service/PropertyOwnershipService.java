@@ -20,4 +20,6 @@ public interface PropertyOwnershipService extends CurdService<PropertyOwnershipR
 
     void assignMultipleOwnership(List<PropertyOwnershipRequest> propertyOwnershipRequests);
 
+    List<PropertyOwnership> getOwnershipsBy(Long propertyId);
+
 }

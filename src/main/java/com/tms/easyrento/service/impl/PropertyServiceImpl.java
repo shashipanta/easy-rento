@@ -94,6 +94,11 @@ public class PropertyServiceImpl implements PropertyService {
             propertyOwnership.setProperty(savedProperty);
         });
 
+        // for rooms
+        if (property.getPropertyType() != null && !PropertyType.LAND.equals(property.getPropertyType())) {
+            property.getRooms().forEach(room -> room.setProperty(savedProperty));
+        }
+
         propertyOwnershipService.assignOwnership(propertyOwnerships);
 
         return savedProperty.getId();
@@ -104,8 +109,8 @@ public class PropertyServiceImpl implements PropertyService {
     private DynamicPricingRequest toDynamicPricingRequest(PropertyRequest request) {
         return DynamicPricingRequest.builder()
                 .total_rooms(String.valueOf(request.getTotalRooms()))
-                .total_bedrooms(String.valueOf(request.getTotalBedRooms()))
-                .total_living_rooms(String.valueOf(request.getTotalLivingRooms()))
+                .total_bedrooms(String.valueOf(0L))
+                .total_living_rooms(String.valueOf(String.valueOf(0L)))
                 .hotwater(String.valueOf(1))
                 .location("City")
                 .electricity("Yes")
@@ -119,9 +124,7 @@ public class PropertyServiceImpl implements PropertyService {
         String land = PropertyType.LAND.getTypeName();
         if(land.equalsIgnoreCase(property.getPropertyType().getTypeName())) {
             property.setTotalRooms(null);
-            property.setTotalBedRooms(null);
-            property.setTotalBathRooms(null);
-            property.setTotalLivingRooms(null);
+            // todo: set the Rooms field to 0 or not needed at all
         }
     }
 
@@ -132,7 +135,16 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public Long update(PropertyRequest request, Long aLong) {
         Property property = propertyRepo.findById(aLong).orElseThrow();
-        return propertyRepo.save(propertyMapper.partialUpdate(request, property)).getId();
+        propertyMapper.partialUpdate(request, property);
+
+        // mapping typical nested objects
+//        List<PropertyOwnershipRequest> editedProductOwnership = request.getPropertyOwnershipRequests().stream()
+//                .filter(PropertyOwnershipRequest::isEdited)
+//                .map(PropertyMapper::)
+//                .toList();
+
+        propertyRepo.save(property);
+        return property.getId();
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.tms.easyrento.dto.request;
 import com.tms.easyrento.constants.FieldErrorConstants;
 import com.tms.easyrento.util.annotations.ConditionalNotNull;
 import com.tms.easyrento.util.annotations.ConditionalValidator;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -39,12 +40,10 @@ public class PropertyRequest {
 
     private Short totalRooms;
 
-    private Short totalBathRooms = 1;
+    private List<RoomRequest> rooms;
 
-    private Short totalBedRooms = 1;
-
-    private Short totalLivingRooms = 1;
-
+    // without this validation is not propagated to the nested object
+    @Valid
     @NotEmpty(message = FieldErrorConstants.NOT_EMPTY)
     private List<PropertyOwnershipRequest> propertyOwnershipRequests = new ArrayList<>();
 

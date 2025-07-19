@@ -1,6 +1,7 @@
 package com.tms.easyrento.dto.request;
 
 import com.tms.easyrento.constants.FieldErrorConstants;
+import com.tms.easyrento.dto.common.DTOGroups;
 import com.tms.easyrento.model.propertyOwnership.PropertyOwnershipId;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class PropertyOwnershipRequest {
     // this is just for response object
     private PropertyOwnershipId id;
 
+    @NotNull(message = FieldErrorConstants.NOT_NULL)
     private Long userAccountId;
 
     private String ownerName;
@@ -32,7 +34,6 @@ public class PropertyOwnershipRequest {
     @NotNull(message = FieldErrorConstants.NOT_NULL)
     private Long ownerId;
 
-    @NotNull(message = FieldErrorConstants.NOT_NULL)
     private Long propertyId;
 
     @NotNull(message = FieldErrorConstants.NOT_NULL)
@@ -40,6 +41,9 @@ public class PropertyOwnershipRequest {
 
     @NotNull(message = FieldErrorConstants.NOT_NULL)
     private LocalDate startDate = LocalDate.now();
+
+    @NotNull(message = FieldErrorConstants.NOT_NULL, groups = {DTOGroups.UpdateGroup.class})
+    private boolean edited = false;
 
     public PropertyOwnershipRequest(Long ownerId) {
         setOwnerId(ownerId);

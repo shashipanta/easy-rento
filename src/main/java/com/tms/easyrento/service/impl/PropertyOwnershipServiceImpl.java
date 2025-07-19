@@ -92,4 +92,10 @@ public class PropertyOwnershipServiceImpl implements PropertyOwnershipService {
     public void assignMultipleOwnership(List<PropertyOwnershipRequest> propertyOwnershipRequests) {
 
     }
+
+    @Override
+    public List<PropertyOwnership> getOwnershipsBy(Long propertyId) {
+        List<PropertyOwnership> ownershipsByProperty = propertyOwnershipRepo.findById_PropertyId(propertyId);
+        return ownershipsByProperty;
+    }
 }
