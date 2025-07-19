@@ -150,6 +150,7 @@
           and p.active = true;
     </select>
 
+    <!-- Here admin means the one who created the property : owner -->
     <select id="getSinglePropertyForAdmin" resultMap="singlePropertyInfo">
         SELECT p.id                        as propertyId,
                p.property_code             as propertyCode,

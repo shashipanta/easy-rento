@@ -1,5 +1,6 @@
 package com.tms.easyrento.dto.response;
 
+import com.tms.easyrento.enums.RoomType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,6 +33,8 @@ public class SinglePropertyResponse {
 
     private Short totalRooms;
 
+    private List<RoomInfo> rooms;
+
     private Boolean occupied;
 
     private Boolean active;
@@ -43,5 +46,12 @@ public class SinglePropertyResponse {
     private List<ImageResponse> secondaryImages;
 
     private List<PropertyOwnershipResponse> propertyOwnerships;
+
+    @Getter
+    @Setter
+    public static final class RoomInfo {
+        private RoomType roomType;
+        private Short noOfRooms;
+    }
 
 }

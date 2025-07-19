@@ -13,6 +13,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author shashi
@@ -64,14 +65,8 @@ public class Property extends AbstractAuditor {
     @Column(name = "total_rooms")
     private Short totalRooms;
 
-    @Column(name = "total_bed_rooms")
-    private Short totalBedRooms = 1;
-
-    @Column(name = "total_living_rooms")
-    private Short totalLivingRooms = 1;
-
-    @Column(name = "total_bath_rooms")
-    private Short totalBathRooms = 1;
+    @OneToMany(mappedBy = "property", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<Room> rooms;
 
     @Column(name = "occupied")
     private boolean occupied = false;
