@@ -40,6 +40,7 @@ public class PropertyRequest {
 
     private Short totalRooms;
 
+    @Valid
     private List<RoomRequest> rooms;
 
     // without this validation is not propagated to the nested object

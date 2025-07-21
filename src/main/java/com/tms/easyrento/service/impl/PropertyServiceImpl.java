@@ -125,6 +125,7 @@ public class PropertyServiceImpl implements PropertyService {
         if(land.equalsIgnoreCase(property.getPropertyType().getTypeName())) {
             property.setTotalRooms(null);
             // todo: set the Rooms field to 0 or not needed at all
+            property.getRooms().clear();
         }
     }
 
@@ -137,11 +138,11 @@ public class PropertyServiceImpl implements PropertyService {
         Property property = propertyRepo.findById(aLong).orElseThrow();
         propertyMapper.partialUpdate(request, property);
 
-        // mapping typical nested objects
-//        List<PropertyOwnershipRequest> editedProductOwnership = request.getPropertyOwnershipRequests().stream()
-//                .filter(PropertyOwnershipRequest::isEdited)
-//                .map(PropertyMapper::)
-//                .toList();
+        setLandPropertyInfo(property);
+        // for rooms
+        if (property.getPropertyType() != null && !PropertyType.LAND.equals(property.getPropertyType())) {
+            property.getRooms().forEach(room -> room.setProperty(property));
+        }
 
         propertyRepo.save(property);
         return property.getId();

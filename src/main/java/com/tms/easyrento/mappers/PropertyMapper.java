@@ -43,6 +43,7 @@ public interface PropertyMapper extends DefaultMapper<PropertyRequest, Property,
 
     @Mapping(source = "propertyTitle", target = "title")
     @Mapping(source = "propertyOwnershipRequests", target = "propertyOwnerships")
+    @Mapping(source = "rooms", target = "rooms", qualifiedByName = "mapListToSet")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Property partialUpdate(PropertyRequest propertyRequest, @MappingTarget Property property);
 
@@ -62,7 +63,7 @@ public interface PropertyMapper extends DefaultMapper<PropertyRequest, Property,
             Room room = Room.builder()
                     .id(roomRequest.getId())
                     .roomType(RoomType.valueOf(roomRequest.getRoomName()))
-                    .totalRoom(roomRequest.getTotalRoom())
+                    .totalRoom(roomRequest.getTotalRooms())
                     .build();
             set.add(room);
         }

@@ -20,12 +20,21 @@
             <result column="fileName"/>
         </collection>
 
-        <!-- Propertyownership -->
+        <!-- Property ownership -->
         <collection property="propertyOwnerships"
                     resultMap="PropertyOwnershipMap"
                     ofType="com.tms.easyrento.dto.response.PropertyOwnershipResponse"
                     columnPrefix="propertyOwnership_"
                     autoMapping="true">
+        </collection>
+
+        <!-- Rooms Information -->
+        <collection property="rooms"
+                    autoMapping="true"
+                    ofType="com.tms.easyrento.dto.response.RoomResponse"
+                    columnPrefix="rooms_">
+            <id column="id" property="id" />
+            <result column="roomType" property="roomName" />
         </collection>
 
     </resultMap>
@@ -90,13 +99,18 @@
             p_o.owner_id                as propertyOwnership_ownerId,
             p_o.property_id             as propertyOwnership_propertyId,
             p_o.ownership_percentage    as propertyOwnership_ownershipPercentage,
-            p_o.ownership_start_date    as propertyOwnership_ownershipStartDate
+            p_o.ownership_start_date    as propertyOwnership_ownershipStartDate,
+
+            r.id                        as rooms_id,
+            r.room_type                 as rooms_roomType,
+            r.total_room                as rooms_totalRooms         -- front uses in this format
 
         from properties p
             inner join property_images p_i on p.id = p_i.property_id
             left join addresses a on p.address_id = a.id
             inner join property_ownerships p_o on p.id = p_o.property_id
             inner join owners o on p_o.owner_id = o.id
+            left join rooms r on p.id = r.property_id
         where o.user_id = #{ownerId} and p.id = #{propertyId}
 
     </select>

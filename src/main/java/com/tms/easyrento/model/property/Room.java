@@ -30,7 +30,7 @@ public class Room {
     @Column(name = "total_room", nullable = false)
     private Short totalRoom = 0;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "property_id", nullable = false, foreignKey = @ForeignKey(name = "fk_room_property_id"))
     private Property property;
 }

@@ -21,5 +21,5 @@ public class RoomRequest {
     private String roomName;
 
     @NotNull(message = FieldErrorConstants.NOT_NULL)
-    private Short totalRoom;
+    private Short totalRooms;
 }
