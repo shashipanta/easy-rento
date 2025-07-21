@@ -29,6 +29,7 @@ public class AbstractAuditor {
     @CreatedBy
     @Column(name = "created_by", nullable = false)
     private Long createdBy;
+
     @CreatedDate
     @Column(name = "created_on", nullable = false)
     private Timestamp createdOn;

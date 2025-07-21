@@ -110,7 +110,7 @@ public class OwnerServiceImpl implements OwnerService {
      * @return
      */
     @Override
-    public Owner findByUserAccountIdOrGet(Long id) {
+    public Owner findByUserAccountIdOrGetDetachedOwner(Long id) {
         Optional<Owner> ownerOpt = ownerRepo.findByUserAccount_Id(id);
         if (ownerOpt.isPresent()) {
             return ownerOpt.get();
@@ -118,8 +118,12 @@ public class OwnerServiceImpl implements OwnerService {
 
         UserAccount userAccount = userAccountRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User Id not found"));
+        Owner newOwner = new Owner();
+        newOwner.setUserAccount(userAccount);
+        newOwner.setName(userAccount.getUsername());
+        newOwner.setNameNp("user_name_np");
 
-        return new Owner(userAccount.getId(),  userAccount.getUsername(), "user_name_np");
+        return newOwner;
     }
 
 }

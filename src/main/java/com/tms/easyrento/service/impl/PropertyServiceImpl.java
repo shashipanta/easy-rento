@@ -1,6 +1,5 @@
 package com.tms.easyrento.service.impl;
 
-import com.tms.easyrento.config.security.service.JwtService;
 import com.tms.easyrento.config.security.util.JwtUtils;
 import com.tms.easyrento.dto.request.DynamicPricingRequest;
 import com.tms.easyrento.dto.request.PropertyRequest;
@@ -13,11 +12,13 @@ import com.tms.easyrento.mappers.PropertyMapper;
 import com.tms.easyrento.mappers.RentalOfferMapper;
 import com.tms.easyrento.model.file.PropertyImage;
 import com.tms.easyrento.model.property.Property;
+import com.tms.easyrento.model.propertyOwnership.PropertyOwnership;
 import com.tms.easyrento.repository.PropertyImageRepo;
 import com.tms.easyrento.repository.PropertyRepo;
 import com.tms.easyrento.repository.RentalOfferRepo;
 import com.tms.easyrento.service.DynamicPricingService;
 import com.tms.easyrento.service.OwnerService;
+import com.tms.easyrento.service.PropertyOwnershipService;
 import com.tms.easyrento.service.PropertyService;
 import com.tms.easyrento.util.file.FileUtils;
 import jakarta.transaction.Transactional;
@@ -26,8 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -49,17 +50,12 @@ public class PropertyServiceImpl implements PropertyService {
     private final RentalOfferMapper rentalOfferMapper;
     private final RentalOfferRepo rentalOfferRepo;
 
-    private final JwtService jwtService;
     private final JwtUtils jwtUtils;
+    private final PropertyOwnershipService propertyOwnershipService;
 
     @Override
     @Transactional
     public Long create(PropertyRequest request) {
-
-        if  (request.getOwnerIds() == null || request.getOwnerIds().isEmpty()) {
-            Long loggedUserId = jwtUtils.getLoggedUserId();
-            request.setOwnerIds(Set.of(loggedUserId));
-        }
 
         Property property = propertyMapper.requestToEntity(request);
 
@@ -88,16 +84,33 @@ public class PropertyServiceImpl implements PropertyService {
         DynamicPricingRequest dynamicPricingRequest = toDynamicPricingRequest(request);
         Long dynamicPrice = dynamicPricingService.getDynamicPrice(dynamicPricingRequest);
         property.setDynamicPrice(dynamicPrice);
+        List<PropertyOwnership> propertyOwnerships = property.getPropertyOwnerships();
+        property.setPropertyOwnerships(Collections.emptyList());
+        Property savedProperty =  propertyRepo.save(property);
 
-        return propertyRepo.save(property).getId();
+
+        // assign newly created propertyId to the requests
+        propertyOwnerships.forEach(propertyOwnership -> {
+            propertyOwnership.setProperty(savedProperty);
+        });
+
+        // for rooms
+        if (property.getPropertyType() != null && !PropertyType.LAND.equals(property.getPropertyType())) {
+            property.getRooms().forEach(room -> room.setProperty(savedProperty));
+        }
+
+        propertyOwnershipService.assignOwnership(propertyOwnerships);
+
+        return savedProperty.getId();
+
     }
 
     // TODO: change the default values
     private DynamicPricingRequest toDynamicPricingRequest(PropertyRequest request) {
         return DynamicPricingRequest.builder()
                 .total_rooms(String.valueOf(request.getTotalRooms()))
-                .total_bedrooms(String.valueOf(request.getTotalBedRooms()))
-                .total_living_rooms(String.valueOf(request.getTotalLivingRooms()))
+                .total_bedrooms(String.valueOf(0L))
+                .total_living_rooms(String.valueOf(String.valueOf(0L)))
                 .hotwater(String.valueOf(1))
                 .location("City")
                 .electricity("Yes")
@@ -111,9 +124,8 @@ public class PropertyServiceImpl implements PropertyService {
         String land = PropertyType.LAND.getTypeName();
         if(land.equalsIgnoreCase(property.getPropertyType().getTypeName())) {
             property.setTotalRooms(null);
-            property.setTotalBedRooms(null);
-            property.setTotalBathRooms(null);
-            property.setTotalLivingRooms(null);
+            // todo: set the Rooms field to 0 or not needed at all
+            property.getRooms().clear();
         }
     }
 
@@ -124,7 +136,16 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public Long update(PropertyRequest request, Long aLong) {
         Property property = propertyRepo.findById(aLong).orElseThrow();
-        return propertyRepo.save(propertyMapper.partialUpdate(request, property)).getId();
+        propertyMapper.partialUpdate(request, property);
+
+        setLandPropertyInfo(property);
+        // for rooms
+        if (property.getPropertyType() != null && !PropertyType.LAND.equals(property.getPropertyType())) {
+            property.getRooms().forEach(room -> room.setProperty(property));
+        }
+
+        propertyRepo.save(property);
+        return property.getId();
     }
 
     @Override
@@ -200,7 +221,7 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public PropertyResponse getPropertyInfo(Long propertyId) {
         // todo: add string constants for this "userId"
-        Long ownerId = Long.valueOf(jwtService.extractClaimForLoggedInUser("userId"));
+        Long ownerId = jwtUtils.getLoggedUserId();
         PropertyResponse singlePropertyByOwnerId = iPropertyMapper.findSinglePropertyByOwnerId(ownerId, propertyId);
         return singlePropertyByOwnerId;
 
@@ -208,7 +229,7 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public List<PropertyResponse> getPropertyBy() {
-        Long ownerId = jwtService.getLoggedUserId();
+        Long ownerId = jwtUtils.getLoggedUserId();
         return iPropertyMapper.findPropertiesByOwnerId(ownerId);
     }
 

@@ -20,6 +20,23 @@
             <result column="fileName"/>
         </collection>
 
+        <!-- Property ownership -->
+        <collection property="propertyOwnerships"
+                    resultMap="PropertyOwnershipMap"
+                    ofType="com.tms.easyrento.dto.response.PropertyOwnershipResponse"
+                    columnPrefix="propertyOwnership_"
+                    autoMapping="true">
+        </collection>
+
+        <!-- Rooms Information -->
+        <collection property="rooms"
+                    autoMapping="true"
+                    ofType="com.tms.easyrento.dto.response.RoomResponse"
+                    columnPrefix="rooms_">
+            <id column="id" property="id" />
+            <result column="roomType" property="roomName" />
+        </collection>
+
     </resultMap>
 
     <resultMap id="propertyList" type="com.tms.easyrento.dto.response.PropertyResponse" autoMapping="true">
@@ -30,14 +47,28 @@
         </collection>
     </resultMap>
 
+    <resultMap id="PropertyOwnershipMap" type="com.tms.easyrento.dto.response.PropertyOwnershipResponse">
+        <!-- Map composite key -->
+        <association property="id" javaType="com.tms.easyrento.model.propertyOwnership.PropertyOwnershipId">
+            <result property="ownerId" column="ownerId" />
+            <result property="propertyId" column="propertyId" />
+        </association>
+    </resultMap>
+
     <resultMap id="singlePropertyInfo" type="com.tms.easyrento.dto.response.SinglePropertyResponse" autoMapping="true" >
         <id property="id" column="propertyId"/>
         <association property="featuredImage" resultMap="imageMap" columnPrefix="propertyImage_"/>
         <collection property="secondaryImages" ofType="com.tms.easyrento.dto.response.ImageResponse" autoMapping="true"
                     columnPrefix="propertyImage_" >
             <id property="id" column="id" />
-            <id property="featured" column="featured" javaType="boolean"/>
-            <id property="imageType" column="imageType" />
+            <result property="featured" column="featured" javaType="boolean"/>
+            <result property="imageType" column="imageType" />
+        </collection>
+        <collection property="propertyOwnerships"
+                    resultMap="PropertyOwnershipMap"
+                    ofType="com.tms.easyrento.dto.response.PropertyOwnershipResponse"
+                    columnPrefix="propertyOwnership_"
+                    autoMapping="true">
         </collection>
     </resultMap>
 
@@ -64,90 +95,105 @@
             p.total_rooms               as totalRooms,
             p.description               as description,
 
-            p_i.file_name               as fileName
+            p_i.file_name               as fileName,
+            p_o.owner_id                as propertyOwnership_ownerId,
+            p_o.property_id             as propertyOwnership_propertyId,
+            p_o.ownership_percentage    as propertyOwnership_ownershipPercentage,
+            p_o.ownership_start_date    as propertyOwnership_ownershipStartDate,
+
+            r.id                        as rooms_id,
+            r.room_type                 as rooms_roomType,
+            r.total_room                as rooms_totalRooms         -- front uses in this format
 
         from properties p
             inner join property_images p_i on p.id = p_i.property_id
             left join addresses a on p.address_id = a.id
-        where p.owner_id = #{ownerId} and p.id = #{propertyId}
+            inner join property_ownerships p_o on p.id = p_o.property_id
+            inner join owners o on p_o.owner_id = o.id
+            left join rooms r on p.id = r.property_id
+        where o.user_id = #{ownerId} and p.id = #{propertyId}
 
     </select>
 
     <select id="findActiveList" resultMap="propertyList">
-        SELECT
-        p.id as propertyId,
-        p.property_code as propertyCode,
-        p.title as propertyTitle,
-        p.property_type as propertyType,
-        p.allocated_price as propertyPrice,
-        p.price_per_unit as pricePerUnit,
-        p.is_system_evaluated_price as isSystemEvaluatedPrice,
-        p.dynamic_price as dynamicPrice,
-        p.total_rooms as totalRooms,
-        p.occupied as occupied,
+        SELECT p.id                        as propertyId,
+               p.property_code             as propertyCode,
+               p.title                     as propertyTitle,
+               p.property_type             as propertyType,
+               p.allocated_price           as propertyPrice,
+               p.price_per_unit            as pricePerUnit,
+               p.is_system_evaluated_price as isSystemEvaluatedPrice,
+               p.dynamic_price             as dynamicPrice,
+               p.total_rooms               as totalRooms,
+               p.occupied                  as occupied,
 
 
-        p_i.id as propertyImage_id,
-        p_i.file_name as propertyImage_fileName
+               p_i.id                      as propertyImage_id,
+               p_i.file_name               as propertyImage_fileName
 
         FROM properties p
-        inner join property_images p_i on p.id = p_i.property_id
+                 inner join property_images p_i on p.id = p_i.property_id
         WHERE CASE
-        WHEN #{isActive} = '1' THEN p.active = true
-        WHEN #{isActive} = '0' THEN p.active = false
-        ELSE p.active = p.active
-        END
+                  WHEN #{isActive} = '1' THEN p.active = true
+                  WHEN #{isActive} = '0' THEN p.active = false
+                  ELSE p.active = p.active
+                  END
     </select>
 
     <!-- @param: ownerId is loggedInUserId -->
     <select id="findPropertiesByOwnerId" resultMap="propertyList">
-     SELECT
-        p.id                        as propertyId,
-        p.property_code             as propertyCode,
-        p.title                     as propertyTitle,
-        p.property_type             as propertyType,
-        p.allocated_price           as allocatedPrice,
-        p.price_per_unit            as pricePerUnit,
-        p.is_system_evaluated_price as isSystemEvaluatedPrice,
-        p.dynamic_price             as dynamicPrice,
-        p.total_rooms               as totalRooms,
-        p.occupied                  as occupied,
-        p.created_on                as createdOn,
-        p_i.id                      as propertyImage_id,
-        p_i.file_name               as propertyImage_fileName
-
-    FROM properties p
-             inner join property_images p_i on p.id = p_i.property_id
-             inner join property_owner p_o on p.id = p_o.property_id
-             inner join owners o on p_o.owner_id = o.id
-    where o.user_id = #{ownerId}
-      and p.active = true
+        SELECT p.id                        as propertyId,
+               p.property_code             as propertyCode,
+               p.title                     as propertyTitle,
+               p.property_type             as propertyType,
+               p.allocated_price           as allocatedPrice,
+               p.price_per_unit            as pricePerUnit,
+               p.is_system_evaluated_price as isSystemEvaluatedPrice,
+               p.dynamic_price             as dynamicPrice,
+               p.total_rooms               as totalRooms,
+               p.occupied                  as occupied,
+               p.created_on                as createdOn,
+               p_i.id                      as propertyImage_id,
+               p_i.file_name               as propertyImage_fileName
+        FROM properties p
+                 inner join property_images p_i on p.id = p_i.property_id
+                 inner join property_ownerships p_o on p.id = p_o.property_id
+                 inner join owners o on p_o.owner_id = o.id
+                 left join user_accounts u_a on o.user_id = u_a.id
+        where u_a.id = #{ownerId}
+          and p.active = true;
     </select>
 
+    <!-- Here admin means the one who created the property : owner -->
     <select id="getSinglePropertyForAdmin" resultMap="singlePropertyInfo">
-        SELECT
-        p.id                        as propertyId,
-        p.property_code             as propertyCode,
-        p.title                     as propertyTitle,
-        p.property_type             as propertyType,
-        p.allocated_price           as propertyPrice,
-        p.price_per_unit            as pricePerUnit,
-        p.is_system_evaluated_price as isSystemEvaluatedPrice,
-        p.dynamic_price             as dynamicPrice,
-        p.total_rooms               as totalRooms,
-        p.occupied                  as occupied,
+        SELECT p.id                        as propertyId,
+               p.property_code             as propertyCode,
+               p.title                     as propertyTitle,
+               p.property_type             as propertyType,
+               p.allocated_price           as propertyPrice,
+               p.price_per_unit            as pricePerUnit,
+               p.is_system_evaluated_price as isSystemEvaluatedPrice,
+               p.dynamic_price             as dynamicPrice,
+               p.total_rooms               as totalRooms,
+               p.occupied                  as occupied,
 
-        p_i.id                      as propertyImage_id,
-        p_i.file_name               as propertyImage_fileName,
-        p_i.featured                as propertyImage_featured,
-        p.title                     as propertyImage_altText,
-        case when p_i.featured
-             then 'featured'
-             else 'secondary'
-        end                         as propertyImage_imageType
+               p_i.id                      as propertyImage_id,
+               p_i.file_name               as propertyImage_fileName,
+               p_i.featured                as propertyImage_featured,
+               p.title                     as propertyImage_altText,
+               case
+                   when p_i.featured = true then
+                       'featured'
+                   when p_i.featured = false then 'secondary'
+                   end                     as propertyImage_imageType,
+               p_o.owner_id                as propertyOwnership_ownerId,
+               p_o.property_id             as propertyOwnership_propertyId,
+               p_o.ownership_percentage    as propertyOwnership_ownershipPercentage,
+               p_o.ownership_start_date    as propertyOwnership_ownershipStartDate
 
         FROM properties p
-        inner join property_images p_i on p.id = p_i.property_id
+                 inner join property_images p_i on p.id = p_i.property_id
+                 inner join property_ownerships p_o on p.id = p_o.property_id
         WHERE p.id = #{propertyId}
     </select>
 

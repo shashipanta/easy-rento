@@ -12,6 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserDetailsResponse {
+    private Long userAccountId;
     private Long ownerId;
     private Long tenantId;
     private String username;

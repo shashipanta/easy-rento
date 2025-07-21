@@ -36,6 +36,8 @@ public class CustomExceptionHandler  {
 
     private static final String PREFIX_UNIQUE = "uk";
     private static final String PREFIX_FOREIGN = "fk";
+    private static final String PREFIX_NOT_NULL = "not.null";
+    private static final String PREFIX_CHECK = "check.violation";
 
     private static final String NOT_NULL = "NotNull";
     private static final String CONDITIONAL_NOT_NULL = "ConditionalNotNull";
@@ -77,23 +79,60 @@ public class CustomExceptionHandler  {
 
     private void extractMessageFromViolation(List<String> errors, ConstraintViolationException cve) {
         String constraintName = cve.getConstraintName();
-        String[] split = constraintName.split("_");
-        String columnName = split[split.length - 1];
-        String stringConstCode = columnName.replace("-", ".");
-        String errorMessage = "";
 
-        String errPrefix = split[0];
-
-        if (PREFIX_UNIQUE.equals(errPrefix)) {
-            try {
-                errorMessage = messageSource.get("exists", messageSource.get(stringConstCode));
-            } catch (Exception e) {
-                logger.error(e.getMessage());
-            }
-            errors.add(errorMessage);
-            cve.printStackTrace();
-
+        if(constraintName == null || !constraintName.contains("_")) {
+            errors.add(getDefaultMessage());
+            return;
         }
+
+        String[] split = constraintName.split("_");
+
+        if(split.length < 2) {
+            errors.add(getDefaultMessage());
+            return;
+        }
+
+        String columnName = split[split.length - 1];
+        String fieldKey = columnName.replace("-", ".");
+        String fieldLabel;
+
+        // error prefix eg: uk_, pk_
+        String type = split[0].toLowerCase();
+
+        try {
+            fieldLabel = messageSource.get(fieldKey);
+        } catch (Exception e) {
+            logger.warn("No i18n message for field '{}'", fieldKey);
+            fieldLabel = prettify(columnName);
+        }
+
+        String messageKey = switch (type) {
+            case PREFIX_UNIQUE      -> "exists";
+            case PREFIX_FOREIGN     -> "foreign.key.violation";
+            case PREFIX_CHECK       -> "check.violation";
+            case PREFIX_NOT_NULL    -> "not.null";
+            default                 -> "error.constraint.violation";
+        };
+
+        String message = messageSource.get(messageKey, fieldLabel);
+        errors.add(message);
+    }
+
+    private String getDefaultMessage() {
+        return messageSource.get("error.constraint.violation", null, "Invalid operation due to data constraints");
+    }
+
+    private String prettify(String name) {
+        String[] parts = name.split("_");
+        StringBuilder builder = new StringBuilder();
+        for (String part : parts) {
+            if (!part.isBlank()) {
+                builder.append(Character.toUpperCase(part.charAt(0)))
+                        .append(part.substring(1).toLowerCase())
+                        .append(" ");
+            }
+        }
+        return builder.toString().trim();
     }
 
 

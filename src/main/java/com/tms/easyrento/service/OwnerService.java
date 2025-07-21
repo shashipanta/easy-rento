@@ -36,6 +36,6 @@ public interface OwnerService extends CurdService<OwnerRequest, Owner, OwnerResp
     Integer rentOfferCounts();
 
     // for mapping id to owner during MapStruct mapping action
-    Owner findByUserAccountIdOrGet(Long id);
+    Owner findByUserAccountIdOrGetDetachedOwner(Long id);
 
 }

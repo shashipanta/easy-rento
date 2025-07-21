@@ -132,6 +132,9 @@ public class UserAccountServiceImpl implements UserAccountService {
         UserAccount userAccount = userAccountRepo.findById(userId).orElseThrow();
         UserDetailsResponse userDetailsResponse = objectMapper.convertValue(userAccount, UserDetailsResponse.class);
         String userType = userAccount.getUserType().name();
+
+        userDetailsResponse.setUserAccountId(userAccount.getId());
+        // todo: revert this mapping to get actual ownerId and tenantId based on scenario
         if(UserType.OWNER.name().equals(userType))
             userDetailsResponse.setOwnerId(userAccount.getId());
         else

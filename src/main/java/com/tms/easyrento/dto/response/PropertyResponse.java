@@ -52,8 +52,13 @@ public class PropertyResponse {
 
     private List<PropertyImageResponse> propertyImages;
 
+    private List<RoomResponse> rooms;
+
     private String description;
 
+    private List<PropertyOwnershipResponse> propertyOwnerships;
+
+    // todo: extract this into it's own class
     @Getter
     @Setter
     public static class PropertyImageResponse {
