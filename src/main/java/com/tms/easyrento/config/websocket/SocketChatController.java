@@ -13,7 +13,7 @@ import org.springframework.stereotype.Controller;
  */
 
 @Controller
-public class ChatController {
+public class SocketChatController {
 
     @MessageMapping("/chat.sendMessage")
     @SendTo("/topic/public")

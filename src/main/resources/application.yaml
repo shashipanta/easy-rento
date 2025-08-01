@@ -13,6 +13,12 @@ spring:
       enabled: true
       max-file-size: 30MB
       max-request-size: 200MB
+  # Mongo DB configuration
+  data:
+    mongodb:
+      uri: mongodb://root:root@localhost:27017/easy-chat?authSource=admin
+      username: root
+      password: root
 
   jpa:
     show-sql: true
@@ -39,6 +45,12 @@ logging:
     org.springframework.web: debug
     org.springframework.security: debug
     com.tms.easyrento.dbMappers: debug
+
+    # MongoDB
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+    org.springframework.data.mongodb.core.MongoTemplate.query: TRACE
+    org.mongodb.driver: DEBUG
+
 
 # jwt property
 jwt:

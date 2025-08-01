@@ -14,4 +14,6 @@ public interface JwtService {
     String extractClaimForLoggedInUser(String claimName);
 
     Long getLoggedUserId();
+
+    boolean validateToken(String token);
 }

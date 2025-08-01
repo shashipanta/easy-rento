@@ -40,5 +40,17 @@ public class JwtServiceImpl implements JwtService {
         return Long.valueOf(extractClaim(authenticationToken.getToken(), "userId"));
     }
 
+    @Override
+    public boolean validateToken(String token) {
+        boolean isTokenValid = false;
+        try {
+            isTokenValid = jwtUtils.validateToken(token);
+            return isTokenValid;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return isTokenValid;
+        }
+    }
+
 
 }
