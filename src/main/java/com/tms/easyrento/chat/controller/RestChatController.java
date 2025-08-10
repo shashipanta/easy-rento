@@ -1,6 +1,6 @@
 package com.tms.easyrento.chat.controller;
 
-import com.tms.easyrento.chat.projections.ChatResponseProjection;
+import com.tms.easyrento.chat.dto.ChatResponseDto;
 import com.tms.easyrento.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +25,10 @@ public class RestChatController {
     private final ChatService chatService;
 
     @GetMapping("/history")
-    ResponseEntity<List<ChatResponseProjection>> getUserChats(@RequestParam("userId") Long userId,
-                                                              @RequestParam(value = "groupId", required = false) Long groupId,
-                                                              @RequestParam(value = "limit", defaultValue = "10") int limit) {
-        List<ChatResponseProjection> messagesForUser = chatService.getRecentMessages(userId, groupId, limit);
+    ResponseEntity<List<ChatResponseDto>> getUserChats(@RequestParam("userId") Long userId,
+                                                       @RequestParam(value = "groupId", required = false) Long groupId,
+                                                       @RequestParam(value = "limit", defaultValue = "10") int limit) {
+        List<ChatResponseDto> messagesForUser = chatService.getRecentMessages(userId, groupId, limit);
         return ResponseEntity.ok(messagesForUser);
     }
 }

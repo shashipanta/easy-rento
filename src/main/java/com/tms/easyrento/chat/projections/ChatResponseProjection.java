@@ -1,7 +1,5 @@
 package com.tms.easyrento.chat.projections;
 
-import com.tms.easyrento.chat.MessageType;
-
 import java.time.LocalDateTime;
 
 public interface ChatResponseProjection {
@@ -10,7 +8,7 @@ public interface ChatResponseProjection {
     String getName();
     String getContent();
     LocalDateTime getTimestamp();
-    MessageType getType();
+//    String getType();
     String getSenderId();
     String getReceiverId();
     String getSenderName();

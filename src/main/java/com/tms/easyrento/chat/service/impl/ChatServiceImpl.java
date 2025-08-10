@@ -3,8 +3,8 @@ package com.tms.easyrento.chat.service.impl;
 import com.tms.easyrento.chat.MessageType;
 import com.tms.easyrento.chat.dto.ChatRequest;
 import com.tms.easyrento.chat.dto.ChatResponse;
+import com.tms.easyrento.chat.dto.ChatResponseDto;
 import com.tms.easyrento.chat.model.ChatMessage;
-import com.tms.easyrento.chat.projections.ChatResponseProjection;
 import com.tms.easyrento.chat.repo.ChatMessageRepo;
 import com.tms.easyrento.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -68,15 +68,15 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public List<ChatResponseProjection> getRecentMessages(Long userId, Long groupId, int limit) {
-        List<ChatResponseProjection> messages;
+    public List<ChatResponseDto> getRecentMessages(Long userId, Long groupId, int limit) {
+        List<ChatResponseDto> messages;
         Pageable pageable = PageRequest.of(0, limit);
         if (groupId != null) {
             // Get recent group messages
             messages = chatMessageRepo.findByGroupIdOrderByTimestampDesc(groupId, pageable);
         } else {
             // Get recent private messages where user is sender or receiver
-            messages = chatMessageRepo.findPrivateMessageBy(userId, pageable);
+            messages = chatMessageRepo.findPrivateMessageBys(userId);
         }
 
         // Reverse to show oldest first

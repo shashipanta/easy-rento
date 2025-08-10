@@ -11,7 +11,7 @@ import jakarta.validation.ConstraintValidatorContext;
 public class NepaliPhoneNumberValidator implements ConstraintValidator<NepaliPhoneNumber, String> {
     /**
      * Initializes the validator in preparation for
-     * {@link #isValid(Object, ConstraintValidatorContext)} calls.
+     * {@link ConstraintValidator#isValid(Object, ConstraintValidatorContext)} calls.
      * The constraint annotation for a given constraint declaration
      * is passed.
      * <p>
