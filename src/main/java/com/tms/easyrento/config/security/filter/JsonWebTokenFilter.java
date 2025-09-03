@@ -38,8 +38,7 @@ public class JsonWebTokenFilter extends OncePerRequestFilter {
     private static final String AUTH_COOKIE_HEADER_NAME = "accessToken";
     private static final String BEARER = "Bearer";
     private static final List<String> WHITELISTED_API = List.of(
-            "/admin/login",
-            "/admin/login?error", // this can be replaced with /admin/login/** as
+            "/admin/**", // this can be replaced with /admin/login/** as
             "/admin/css/**",
             "/admin/js/**"
     );

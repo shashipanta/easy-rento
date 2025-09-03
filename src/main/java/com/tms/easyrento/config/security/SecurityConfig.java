@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
@@ -69,7 +70,7 @@ public class SecurityConfig {
         http
                 .securityMatcher(ADMIN_ENDPOINT)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/login", "admin/css/**", "/admin/js/**").permitAll()
+                        .requestMatchers("/admin/login", "/admin/css/**", "/admin/js/**").permitAll()
                         .anyRequest().authenticated() // ← allow any authenticated user (even without role)
                 )
                 .formLogin(form -> form
@@ -112,7 +113,9 @@ public class SecurityConfig {
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationManager(authenticationManager())
                 .addFilterBefore(jsonWebTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .securityMatcher("/api/**") // only for API endpoints
                 .build();
     }
 
@@ -122,7 +125,8 @@ public class SecurityConfig {
      *
      * @return
      */
-    @Bean
+    @Primary
+    @Bean("userAuthenticationManager")
     public AuthenticationManager authenticationManager() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(customUserDetailsService);
@@ -130,6 +134,7 @@ public class SecurityConfig {
         return new ProviderManager(daoAuthenticationProvider);
     }
 
+    @Bean(name = "adminAuthenticationManager")
     public AuthenticationManager adminAuthenticationManager() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(adminUserDetailsService);

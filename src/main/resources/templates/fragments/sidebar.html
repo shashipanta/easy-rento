@@ -7,7 +7,7 @@
     <!-- User Info -->
     <div class="text-sm text-gray-300 text-center border-b border-gray-600 pb-4 mb-4">
         Logged in as<br/>
-        <span class="font-semibold text-white" th:text="${#authentication.name}">admin@example.com</span>
+        <span class="font-semibold text-white" th:text="${#authentication?.name}">admin@example.com</span>
     </div>
 
     <nav class="space-y-1 text-sm font-medium">

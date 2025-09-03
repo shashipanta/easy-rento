@@ -55,7 +55,7 @@ public class CorsGlobalConfig implements WebMvcConfigurer{
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(authorizationInterceptor);
-        WebMvcConfigurer.super.addInterceptors(registry);
+        registry.addInterceptor(authorizationInterceptor)
+                .addPathPatterns("/api/**");        // leave admin alone
     }
 }
