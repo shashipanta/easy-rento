@@ -21,8 +21,8 @@ public class ChatResponseDto {
 
     private String id;
     private String content;
-    private LocalDateTime timestamp;
-    private String type; // raw string from Mongo, not enum
+    private String timestamp;
+    private String messageType; // raw string from Mongo, not enum
     private String senderId;
     private String senderName;
     private String receiverId;

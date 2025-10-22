@@ -1,7 +1,10 @@
 package com.tms.easyrento.config.websocket;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -21,6 +24,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     };
 
     private final JwtHandshakeInterceptor jwtHandshakeInterceptor;
+    private final JwtChannelInterceptor jwtChannelInterceptor;
+
+    private final Logger logger = LoggerFactory.getLogger(WebSocketConfig.class);
+
     /*
         Use of /app: all the messages will be routed to methods annotated
         with @MessageMapping()
@@ -38,8 +45,19 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .addInterceptors(jwtHandshakeInterceptor)
+//                .addInterceptors(jwtHandshakeInterceptor)
                 .setAllowedOrigins(allowedOrigins);
 //                .withSockJS();      // fallback for browsers not supporting web socket
+
+        //  for SockJS fallback endpoint
+        registry.addEndpoint("/ws-sockjs")
+                .setAllowedOrigins(allowedOrigins)
+                .withSockJS();
+    }
+
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        logger.info("Registering client inbound channel");
+        registration.interceptors(jwtChannelInterceptor);
     }
 }

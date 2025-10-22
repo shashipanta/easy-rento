@@ -1,11 +1,14 @@
 package com.tms.easyrento.chat.service.impl;
 
 import com.tms.easyrento.chat.MessageType;
+import com.tms.easyrento.chat.dto.FriendshipDto;
 import com.tms.easyrento.chat.dto.ChatRequest;
 import com.tms.easyrento.chat.dto.ChatResponse;
 import com.tms.easyrento.chat.dto.ChatResponseDto;
 import com.tms.easyrento.chat.model.ChatMessage;
 import com.tms.easyrento.chat.repo.ChatMessageRepo;
+import com.tms.easyrento.chat.repo.ConversationRepo;
+import com.tms.easyrento.chat.repo.FriendshipRepo;
 import com.tms.easyrento.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -13,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -27,6 +29,8 @@ import java.util.List;
 public class ChatServiceImpl implements ChatService {
 
     private final ChatMessageRepo chatMessageRepo;
+    private final ConversationRepo conversationRepo;
+    private final FriendshipRepo friendsRepo;
 
     @Override
     public ChatResponse saveMessage(ChatRequest chatRequest) {
@@ -39,8 +43,8 @@ public class ChatServiceImpl implements ChatService {
         if (chatMessage == null) return null;
         ChatResponse chatResponse = new ChatResponse();
         chatResponse.setId(chatMessage.getId());
-        chatResponse.setSenderId(Long.valueOf(chatMessage.getSenderId()));
-        chatResponse.setReceiverId(Long.valueOf(chatMessage.getReceiverId()));
+        chatResponse.setSenderId(chatMessage.getSenderId());
+        chatResponse.setReceiverId(chatMessage.getReceiverId());
         chatResponse.setMessageContent(chatMessage.getContent());
 
         return chatResponse;
@@ -50,8 +54,8 @@ public class ChatServiceImpl implements ChatService {
         if (chatRequest == null) return null;
         return ChatMessage.builder()
                 .id(chatRequest.getId())
-                .senderId(String.valueOf(chatRequest.getSenderId()))
-                .receiverId(String.valueOf(chatRequest.getReceiverId()))
+                .senderId(chatRequest.getSenderId())
+                .receiverId(chatRequest.getReceiverId())
                 .groupId(chatRequest.getGroupId())
                 .type(chatRequest.getGroupId() != null ? MessageType.GROUP : MessageType.PRIVATE)
                 .content(chatRequest.getMessageContent())
@@ -76,13 +80,16 @@ public class ChatServiceImpl implements ChatService {
             messages = chatMessageRepo.findByGroupIdOrderByTimestampDesc(groupId, pageable);
         } else {
             // Get recent private messages where user is sender or receiver
-            messages = chatMessageRepo.findPrivateMessageBys(userId);
+//            messages = chatMessageRepo.findPrivateMessageBys(userId);
+            messages = conversationRepo.findPrivateMessagesForUser(userId);
         }
 
-        // Reverse to show oldest first
-        Collections.reverse(messages);
-
         return messages;
+    }
+
+    @Override
+    public List<FriendshipDto> getFriends(Long userId) {
+        return friendsRepo.getAllFriends(userId);
     }
 
     @Override

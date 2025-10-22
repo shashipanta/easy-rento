@@ -1,5 +1,6 @@
 package com.tms.easyrento.chat.model;
 
+import com.tms.easyrento.chat.MessageStatus;
 import com.tms.easyrento.chat.MessageType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -28,10 +29,10 @@ public class ChatMessage {
     private String id;
 
     @Field(name = "sender_id", write = Field.Write.NON_NULL)
-    private String senderId;
+    private Long senderId;
 
     @Field(name = "receiver_id", write = Field.Write.NON_NULL)
-    private String receiverId; // for 1-1 chats or group ID
+    private Long receiverId; // for 1-1 chats or group ID
 
     private String groupId; // null if private
 
@@ -47,5 +48,9 @@ public class ChatMessage {
 
     @Field(name = "edited")
     private boolean edited = false;
+
+    @Enumerated(EnumType.STRING)
+    @Field(name = "status", write = Field.Write.NON_NULL)
+    private MessageStatus status;
 
 }
