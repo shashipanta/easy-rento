@@ -1,14 +1,12 @@
 package com.tms.easyrento.chat.service.impl;
 
 import com.tms.easyrento.chat.MessageType;
-import com.tms.easyrento.chat.dto.FriendshipDto;
-import com.tms.easyrento.chat.dto.ChatRequest;
-import com.tms.easyrento.chat.dto.ChatResponse;
-import com.tms.easyrento.chat.dto.ChatResponseDto;
+import com.tms.easyrento.chat.dto.*;
 import com.tms.easyrento.chat.model.ChatMessage;
 import com.tms.easyrento.chat.repo.ChatMessageRepo;
 import com.tms.easyrento.chat.repo.ConversationRepo;
 import com.tms.easyrento.chat.repo.FriendshipRepo;
+import com.tms.easyrento.chat.repo.UserRepo;
 import com.tms.easyrento.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +29,7 @@ public class ChatServiceImpl implements ChatService {
     private final ChatMessageRepo chatMessageRepo;
     private final ConversationRepo conversationRepo;
     private final FriendshipRepo friendsRepo;
+    private final UserRepo userRepo;
 
     @Override
     public ChatResponse saveMessage(ChatRequest chatRequest) {
@@ -46,6 +45,12 @@ public class ChatServiceImpl implements ChatService {
         chatResponse.setSenderId(chatMessage.getSenderId());
         chatResponse.setReceiverId(chatMessage.getReceiverId());
         chatResponse.setMessageContent(chatMessage.getContent());
+
+        // Add sender and receiver name
+        ConversationUserInfoFlat conversingPartyInfo = userRepo.findConversingPartiesInfoBy(
+                chatMessage.getSenderId(), chatMessage.getReceiverId());
+        chatResponse.setSenderName(conversingPartyInfo.getSenderUserName());
+        chatResponse.setReceiverName(conversingPartyInfo.getReceiverUserName());
 
         return chatResponse;
     }

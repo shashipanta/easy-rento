@@ -38,9 +38,9 @@ public class ConversationRepo extends BaseMongoRepo {
                                         Criteria.where("receiver_id").is(userId)
                                 )
                 ),
-                lookup("users", "sender_id", "id", "sender"),
+                lookup("users", "sender_id", "user_id", "sender"),
                 Aggregation.unwind("sender"),
-                lookup("users", "receiver_id", "id", "receiver"),
+                lookup("users", "receiver_id", "user_id", "receiver"),
                 Aggregation.unwind("receiver"),
                 Aggregation.project()
                         .and(ConvertOperators.ToString.toString(Aggregation.fields("_id"))).as("id")
@@ -66,13 +66,13 @@ public class ConversationRepo extends BaseMongoRepo {
 
             Document senderDoc = d.get("sender", Document.class);
             if (senderDoc != null) {
-                dto.setSenderId(String.valueOf(senderDoc.get("id")));
+                dto.setSenderId(String.valueOf(senderDoc.get("user_id")));
                 dto.setSenderName(senderDoc.get("name", String.class));
             }
 
             Document receiverDoc = d.get("receiver", Document.class);
             if (receiverDoc != null) {
-                dto.setReceiverId(String.valueOf( receiverDoc.get("id")));
+                dto.setReceiverId(String.valueOf( receiverDoc.get("user_id")));
                 dto.setReceiverName(receiverDoc.get("name", String.class));
             }
 

@@ -24,11 +24,11 @@ public class FriendshipRepo extends BaseMongoRepo{
                 Aggregation.match(
                         Criteria.where("user_id").is(userId)
                 ),
-                lookup("users", "friend_id", "id", "friend"),
+                lookup("users", "friend_id", "user_id", "friend"),
                 unwind("friend"),
                 project()
                         .andInclude("friend_id", "since", "last_interacted_on")
-                        .and("friend.id").as("userId")
+                        .and("friend.user_id").as("userId")
                         .and("friend.name").as("userName")
                         .and("friend.avatar_url").as("avatarUrl"),
                 sort(Sort.by(Sort.Direction.DESC, "last_interacted_on"))
